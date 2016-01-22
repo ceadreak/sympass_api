@@ -1,0 +1,1494 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Sympass API
+Sympass API is a RESTful API.
+For each API request except the request token API, there are 2 mandatory http header parameters : 
+- lang > Is an ISO(2) language code (fr | en | de | ...)
+- token > Is the member's unique token
+
+**TODO**
+> Etat des Economies : JSON avec {Date: ..., Valeur: ...€} => champ entité Member <br>
+> Dans API Member, ajouter date de validité de la carte (fin de validité du client ou fin de validité du contrat membre) <br>
+> Récupération du montant "normal" + montant avec réduction + date + partenaire à l'enregistremrent d'un achat <br>
+> Dans API Partenaire, revoyer un lien vers le logo et la banières du partenaire <br>
+> Bannières partenaires : reduire poids des logos et banières (répertoire à part)<br>
+> ID Service billetterie principale à la récupération du member<br>
+> Ajouter contacts / adresses dans la Partners COllection<br>
+> Dans un discount + collectection discounts : ajouter JSON categories<br>
+> Dans Member : rajouter "conciergerie alert" avec le nombre de commandes à venir retirer par le membre<br>
+> Pour les objets uniques, pas de liste > dictionnaire <br>
+> Api Discounts : Ne pas retourner les discounts type ONLINE
+ 
+
+# Description Of Usual Server Responses  
+- 200 `OK` - the request was successful (some API calls may return 201 instead). 
+- 201 `Created` - the request was successful and a resource was created.  
+- 204 `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).  
+- 400 `Bad Request` - the request could not be understood or was missing required parameters.  
+- 401 `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.  
+- 403 `Forbidden` - access denied.  
+- 404 `Not Found` - resource was not found.  
+- 405 `Method Not Allowed` - requested method is not supported for resource.  
+
+
+
+## Route not found [/api/unknown_route]
+Sympass API handle unknown routes and returns a 404 error.
+
+### Access an unknown route [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 404 (application/json)  
+
+        [
+            {  
+                "error": "Not Found",
+                "error_description": "Route does not exists"
+            }  
+        ]
+
+
+
+
+## Request a user token [/oauth/token]
+Because Sympass API's are protected by OAuth2 protocol, each request needs to have a user token passed in the header parameters.
+Such as `grant_type=password&username=766123&password=766123`
+
+### Request token [POST]
+
++ Request (application/x-www-form-urlencoded)
+
+    + Body
+    
+            {
+                "grant_type": "password",
+                "username": "766123",
+                "password": "766123"
+            }
+        
++ Response 200 (application/json) 
+
+        {
+            "access_token": "sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K",
+            "token_type": "Bearer",
+            "expires_in": 604800,
+            "owner_id": 15298,
+            "refresh_token": "DUkXCmAG-emYOldelfxXpQUqmLx1WzcokiG1eSkY"
+        }
+        
+
+
+
+## Member [/api/member/{member_id}]
+Member is a company employee. Company is the client.
+A member is always linked to a client address.
+Each member has a Sympass ID Card.
+
+**Member attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Member unique identifier</td></tr>
+        <tr><td>client_name</td><td>Number</td><td>False</td><td>Client which member is attached to</td></tr>      
+        <tr><td>client_slug</td><td>String</td><td>False</td><td>Unique identifier based on client name</td></tr>      
+        <tr><td>address</td><td>JSON</td><td>False</td><td>Address which member is attached to</td></tr>      
+        <tr><td>sympass_id</td><td>String</td><td>False</td><td>The Sympass card ID</td></tr>      
+        <tr><td>login</td><td>String</td><td>False</td><td>Unique member login</td></tr>
+        <tr><td>password</td><td>String</td><td>False</td><td>Member md5 password</td></tr>      
+        <tr><td>role</td><td>String</td><td>False</td><td>Member's role for ACL * Check the member roles description bellow</td></tr>
+        <tr><td>gender</td><td>String</td><td>False</td><td>male or female</td></tr>
+        <tr><td>first_name</td><td>String</td><td>False</td><td>Member's first name (John)</td></tr>
+        <tr><td>last_name</td><td>String</td><td>False</td><td>Member's last name (Doe)</td></tr>
+        <tr><td>email</td><td>String</td><td>True</td><td>Member's professionnal email address</td></tr>
+        <tr><td>email_personal</td><td>String</td><td>True</td><td>Member's personnal email address. Priority comparing to the email field</td></tr>
+        <tr><td>language</td><td>String</td><td>False</td><td>Member's language iso(2) code (fr|en|de|...) </td></tr>
+        <tr><td>phone</td><td>String</td><td>True</td><td>Member's phone number</td></tr>
+        <tr><td>mobile</td><td>String</td><td>True</td><td>Member's mobile number</td></tr>
+        <tr><td>function</td><td>String</td><td>True</td><td>Member's role in his company</td></tr>
+        <tr><td>valid_from</td><td>Timestamp without Timezone</td><td>False</td><td>Valid from this date</td></tr>      
+        <tr><td>valid_to</td><td>Timestamp without Timezone</td><td>True</td><td>Valid to this date. Null if not defined</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the members statuses description bellow</td></tr>      
+        <tr><td>options</td><td>Number</td><td>False</td><td>* Check the members options description bellow</td></tr>      
+        <tr><td>department</td><td>String</td><td>True</td><td>Where the member works in his company</td></tr>      
+        <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation datetime</td></tr>      
+        <tr><td>deactivated_on</td><td>Timestamp without Timezone</td><td>True</td><td>Deactivation datetime</td></tr>      
+        <tr><td>activated_on</td><td>Timestamp without Timezone</td><td>True</td><td>First activation datetime</td></tr>
+        <tr><td>saved_amount</td><td>Float</td><td>True</td><td>Member's saved amount (combination of partner purshases and ticketing purchases)</td></tr>      
+        <tr><td>hobbies</td><td>Number</td><td>False</td><td>* Check the members hobbies description bellow</td></tr>      
+    </tbody>
+</table>     
+
+**Member roles:**  
+
+<table>  
+    <thead><th>Value</th><th>Permissions short description</th></thead>
+    <tbody>
+        <tr><td>member</td><td>Member can operate for himself, for his own account</td></tr>      
+        <tr><td>corporate_local</td><td>Member can operate for his company account</td></tr>      
+        <tr><td>corporate_global</td><td>Member can operate for a group of companies accounts</td></tr>      
+    </tbody>
+</table>
+
+**Member statuses (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>None</td></tr>      
+        <tr><td>SUSPENDED</td><td>1</td><td>Member is suspended</td></tr>      
+    </tbody>
+</table>
+
+**Member options (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>CAN_USE_TICKETING_SERVICES</td><td>1</td><td>Does member can access to platform ticketing services ?</td></tr>      
+        <tr><td>CAN_USE_CONCIERGERIE_SERVICES</td><td>2</td><td>Does member can access to platform concierge services ?</td></tr>      
+        <tr><td>SUBSCRIBED_TO_NEWSLETTER</td><td>4</td><td>Member has subscribed to the newsletter</td></tr>      
+        <tr><td>TOS_ACCEPTED</td><td>16</td><td>Member has accepted terms of use</td></tr>      
+    </tbody>
+</table>
+
+**Member hobbies (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>TODO</td><td>1</td><td>...</td></tr>      
+    </tbody>
+</table>
+
+
+*Note : A member can only access to the platform if :*
+- status is not suspended
+- activated_on value is lower than now
+- deactivated_on is value is not set or is greather than now
+- valid_from value is less than now
+- valid_to value is greather than now
+
+### Member [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 101905,
+                "client_name": "Emresa",
+                "client_slug": "-emresa",
+                "address": [
+                    {
+                        "id": 562,
+                        "title": "Siège",
+                        "is_head_quarter": true,
+                        "street": "63 route du canal",
+                        "additional_details": "",
+                        "locality": "Luxembourg",
+                        "postal_code" : "L-1610",
+                        "country" : "LU",
+                        "longitude" : "5.9294",
+                        "latitude" : "49.9665"
+                    }
+                ],
+                "sympass_id": "6199318",
+                "login": "6199318",
+                "password": "acd36663cc98e4a18664b892b344fac9",
+                "role": "corporate_local",
+                "gender": "male",
+                "first_name": "Cédric",
+                "last_name": "VOZ",
+                "email": "cedric@marketfinder.lu",
+                "email_personal": "",
+                "language": "fr",
+                "phone": "",
+                "mobile": "",
+                "function": "",
+                "valid_from": "2015-04-17 00:00:00",
+                "valid_to": "",
+                "status": 0,
+                "options": 23,
+                "department": "Siège",
+                "created_on": "2014-04-07 17:15:36",
+                "deactivated_on": "",
+                "activated_on": "2015-04-17 00:00:14",
+                "amount_saved": 123.50,
+                "hobbies": 17
+            }
+        ]
+        
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+### Update Member [PUT]
+TODO - Mise à jour des infos du membre
+TODO - Mise à jour du montant économisé
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Request (application/json)
+
+        {
+            "amount_saved": 30.50,
+            "login": "Toto",
+            "email_personal": "john@doe.com",
+            "options": 3,
+            "address_id": 123,
+            "gender": "male",
+            "first_name": "John",
+            "last_name": "Doe",
+            "language": "fr",
+            "phone": "12 23 38 87",
+            "mobile": "6 682 338 298",
+            "function": "CIO",
+            "hobbies": 17
+        }
+
++ Parameters
+
+    + member_id (number) - ID of the member to update
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "update": "ok"
+            }
+        ]
+    
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+
+
+
+
+## Orders Collection [/api/orders]
+List all orders for a given member (in http headers parameters)
+
+**Order attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Order unique identifier</td></tr>      
+        <tr><td>reference</td><td>String</td><td>False</td><td>Unique order reference "S-0000[increment]"</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the orders statuses description bellow</td></tr>      
+        <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation date</td></tr>      
+        <tr><td>modified_on</td><td>Timestamp without Timezone</td><td>False</td><td>Update date</td></tr>      
+        <tr><td>placed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Placed date</td></tr>      
+        <tr><td>completed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Completion date</td></tr>      
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+    </tbody>
+</table>     
+
+**Order statuses (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>CART</td><td>1</td><td>In customer cart, customer continue their purchases (not combinable with INJECTED)</td></tr>      
+        <tr><td>INJECTED</td><td>2</td><td>Back-office user has injected the order (not combinable with CART)</td></tr>      
+        <tr><td>PLACED</td><td>4</td><td>The order has been placed (== validated by customer)</td></tr>      
+        <tr><td>REJECTED</td><td>8</td><td>The member decided to give up the ordering process (automatically set with the order rejection script)</td></tr>      
+        <tr><td>CANCELLED</td><td>16</td><td>Manual order cancellation by Emresa representative</td></tr>      
+        <tr><td>INVOICED</td><td>32</td><td>An invoice has been generated for this order</td></tr>      
+        <tr><td>COMPLETE</td><td>64</td><td>The order process has been completed (this means that related invoice is POSTED)</td></tr>      
+        <tr><td>LOCKED</td><td>128</td><td>The order cannot be modified, all lines have been handled</td></tr>      
+    </tbody>
+</table>
+
+### List All Member Orders [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 33,
+                "reference": "S-000000033",
+                "status": 1,
+                "created_on": "2016-01-11 17:04:29",
+                "modified_on": "2016-01-11 17:24:28",
+                "placed_on": "",
+                "completed_on": "",
+                "total_excl_tax": 27.23,
+                "total_tax": 0.62,
+                "total_incl_tax": 27.85
+            },
+            {
+                "id": 67,
+                "reference": "S-000000067",
+                "status": 128,
+                "created_on": "2016-01-12 12:04:29",
+                "modified_on": "2016-01-12 13:24:28",
+                "placed_on": "",
+                "completed_on": "",
+                "total_excl_tax": 30,
+                "total_tax": 0,
+                "total_incl_tax": 30
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+## Order [/api/orders/{order_id}]
+Get one order
+Orders are based on 3 levels : 
+- Order > Is the 1st level, contains a collection of ordered services
+    - Ordered Services > Is the 2nd level, contains a collection of order lines
+        - Order Lines > Is the 3rd level, contains products, price, description
+
+**Order attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Order unique identifier</td></tr>      
+        <tr><td>reference</td><td>String</td><td>False</td><td>Unique order reference "S-0000[increment]"</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the orders statuses description bellow</td></tr>      
+        <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation date</td></tr>      
+        <tr><td>modified_on</td><td>Timestamp without Timezone</td><td>False</td><td>Update date</td></tr>      
+        <tr><td>placed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Placed date</td></tr>      
+        <tr><td>completed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Completion date</td></tr>      
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+        <tr><td>ordered_services</td><td>Json</td><td>False</td><td>Collection of customer ordered services</td></tr>      
+    </tbody>
+</table>     
+
+**Ordered Services attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Ordered Service unique identifier</td></tr>      
+        <tr><td>service_name</td><td>Number</td><td>False</td><td>Related service name</td></tr>
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+        <tr><td>will_be_handled_on</td><td>Timestamp without Timezone</td><td>True</td><td>Estimated date of ordered service handling. e.g. next wednesday for ticketing service</td></tr>  
+        <tr><td>order_lines (only for a single order)</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
+    </tbody>
+</table>     
+
+**Order Lines attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Order Line unique identifier</td></tr>      
+        <tr><td>product_name</td><td>Number</td><td>False</td><td>Related product unique identifier</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the order lines statuses description bellow</td></tr>      
+        <tr><td>description</td><td>String</td><td>False</td><td>Description of the ordered product, usually, the product name</td></tr>
+        <tr><td>quantity</td><td>Number</td><td>False</td><td>Quantity of product for one line</td></tr>
+        <tr><td>price</td><td>Float</td><td>False</td><td>Price excluding tax per unit</td></tr>
+        <tr><td>vat_code</td><td>String</td><td>False</td><td>Accounting service formatted vat code</td></tr>
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+    </tbody>
+</table>     
+
+**Order lines statuses (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>PENDING</td><td>1</td><td>Line is waiting for a handling [Ticketing services & Concierge services]</td></tr>      
+        <tr><td>PREPARED</td><td>2</td><td>Order line is ready to be delivered. Only shippable products can be prepared [Ticketing services]</td></tr>      
+        <tr><td>SHIPPED</td><td>4</td><td>Order line has been shipped. Only prepared lines can be shipped [Ticketing services]</td></tr>      
+        <tr><td>PUTTED_DOWN</td><td>8</td><td>Member has put his articles down to be treated in a conciergerie service (laundry, ...) [Concierge services]</td></tr>      
+        <tr><td>CHECKED_OUT</td><td>16</td><td>Conciergerie partner has checked out the deposited member's articles [Concierge services]</td></tr>      
+        <tr><td>BROUGHT_BACK</td><td>32</td><td>Conciergerie partner has brought back the deposited and checked out member's articles [Concierge services]</td></tr>      
+        <tr><td>PICKED_UP</td><td>64</td><td>Order line has been picked up at place. e.g. A member comes to the sympass head quarter and pick up his ready for delivery tickets. e.g.2. A member comes to a conciergerie and pick up his articles. [Ticketing services & Concierge services]</td></tr>      
+    </tbody>
+</table>
+
+### View an Order details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + order_id (number) - ID of the researched order
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 33,
+                "reference": "S-000000033",
+                "status": 1,
+                "created_on": "2016-01-11 17:04:29",
+                "modified_on": "2016-01-11 17:24:28",
+                "placed_on": "",
+                "completed_on": "",
+                "total_excl_tax": 27.23,
+                "total_tax": 0.62,
+                "total_incl_tax": 27.85,
+                "ordered_services": [
+                    {
+                        "id": 39,
+                        "service_name": "Billetterie",
+                        "total_excl_tax": 27.23,
+                        "total_vat": 0.62,
+                        "total_incl_tax": 27.85,
+                        "will_be_handled_on": "2015-12-16 11:05:00",
+                        "order_lines": [
+                            {
+                                "id": 46,
+                                "product_name": "Aquarium Amnéville",
+                                "description": "Aquarium Amnéville",
+                                "quantity": 1,
+                                "price": 6.6,
+                                "vat_code": "vaore",
+                                "total_excl_tax": 6.6,
+                                "total_vat": 0,
+                                "total_incl_tax": 6.6,
+                                "status": 1
+                            },
+                            {
+                                "id": 47,
+                                "product_name": "Mondorf 3h wellness",
+                                "description": "Mondorf 3h wellness",
+                                "quantity": 1,
+                                "price": 20.63,
+                                "vat_code": "vml03",
+                                "total_excl_tax": 20.63,
+                                "total_vat": 0.62,
+                                "total_incl_tax": 21.25,
+                                "status": 1
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+
+
+## Discounts Collection [/api/discounts]
+Discounts are available to partners.
+A discount can be a limited in time discount, with a date from and a date to availability.
+API Discounts request will only fetch the active discounts
+
+*Note : An active discount is :*
+- status is not suspended
+- valid_from value is less than now
+- valid_to value is greather than now
+
+**Discount attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
+        <tr><td>partner_id</td><td>Number</td><td>False</td><td>Partner unique identifier</td></tr>      
+        <tr><td>partner_name</td><td>String</td><td>False</td><td>Partner name</td></tr>      
+        <tr><td>partner_slug</td><td>String</td><td>False</td><td>Unique identifier based on partner name</td></tr>
+        <tr><td>description</td><td>String</td><td>False</td><td>Discount description</td></tr>
+        <tr><td>attention_catcher</td><td>String</td><td>True</td><td>Discount attention catcher will appear in discount section's cards website e.g.</td></tr>
+        <tr><td>countries</td><td>Number</td><td>True</td><td>* Check the discounts countries description bellow</td></tr>
+        <tr><td>minimum</td><td>String</td><td>False</td><td>Minimum discount value (can be equal to zero)</td></tr>
+        <tr><td>maximum</td><td>String</td><td>False</td><td>Maximum discount value</td></tr>
+        <tr><td>valid_from</td><td>Timestamp without Timezone</td><td>True</td><td>Valid from this date</td></tr>
+        <tr><td>valid_to</td><td>Timestamp without Timezone</td><td>True</td><td>Valid to this date</td></tr>
+        <tr><td>flags</td><td>String</td><td>False</td><td>* Check the discounts flags description bellow</td></tr>
+        <tr><td>type</td><td>Number</td><td>False</td><td>* Check the discounts types description bellow</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the discounts statuses description bellow</td></tr>
+    </tbody>
+</table>     
+   
+**Discount statuses (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>SUSPENDED</td><td>1</td><td>Partner is suspended</td></tr>      
+    </tbody>
+</table>
+
+**Discount flags (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>Discount is not limited in time</td></tr>
+        <tr><td>LIMITED</td><td>1</td><td>Discount is limited in time</td></tr>
+        <tr><td>CORPORATE</td><td>2</td><td>Discount may only be visible by a corporate member</td></tr>      
+        <tr><td>LEAFLET</td><td>4</td><td>Discount is configured to be pubicated in the Sympass leaflet</td></tr>      
+    </tbody>
+</table>
+
+**Discount types (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>IN_SHOP</td><td>1</td><td>Discount is available in shop with Sympass card</td></tr>
+        <tr><td>TICKET</td><td>2</td><td>Discount can be available from a ticket (sell in Sympass ticketing section)</td></tr>      
+        <tr><td>ONLINE</td><td>4</td><td>Discount is only available online</td></tr>      
+    </tbody>
+</table>
+
+**Discount available countries (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>No country specified</td></tr>
+        <tr><td>LUXEMBURG</td><td>1</td><td>Discount is available in Luxemburg</td></tr>
+        <tr><td>FANCE</td><td>2</td><td>Discount is available in France</td></tr>      
+        <tr><td>BELGIUM</td><td>4</td><td>Discount is available in Belgium</td></tr>
+        <tr><td>GERMANY</td><td>8</td><td>Discount is available in Germany</td></tr>      
+    </tbody>
+</table>
+
+### List All Discounts [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 5280,
+                "partner_name": "Sephora Luxembourg",
+                "partner_id": 578,
+                "partner_slug": "-sephora-luxembourg",
+                "title": "Limited offer",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "countries": 1,
+                "minimum": 10,
+                "maximum": 20,
+                "valid_from": "2016-01-07 00:00:00",
+                "valid_to": "2016-01-15 00:00:00",
+                "flags": 1,
+                "type": 2,
+                "status": 0
+            },
+            {
+                "id": 5280,
+                "partner_name": "Sephora Luxembourg",
+                "partner_id": 578,
+                "partner_slug": "-sephora-luxembourg",
+                "title": "Permanent offer",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "countries": 3,
+                "minimum": 10,
+                "maximum": 20,
+                "valid_from": "",
+                "valid_to": "",
+                "flags": 0,
+                "type": 2,
+                "status": 0
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+## Discount [/api/discount/{discount_id}]
+Get one discount
+
+### View a Discount details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + discount_id (number) - ID of the researched discount
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 5280,
+                "partner_name": "Sephora Luxembourg",
+                "partner_id": 578,
+                "partner_slug": "-sephora-luxembourg",
+                "title": "Limited offer",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                "countries": 1,
+                "minimum": 10,
+                "maximum": 20,
+                "valid_from": "2016-01-07 00:00:00",
+                "valid_to": "2016-01-15 00:00:00",
+                "flags": 1,
+                "type": 2,
+                "status": 0
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+
+
+
+
+## Partners Collection [/api/partners]
+Partners are `clients` with a `partnership` contract. 
+
+**Partner attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Partner unique identifier</td></tr>      
+        <tr><td>name</td><td>String</td><td>False</td><td>Partner name</td></tr>      
+        <tr><td>slug</td><td>String</td><td>False</td><td>Unique identifier based on partner name</td></tr>
+        <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation date</td></tr>      
+        <tr><td>activated_on</td><td>Timestamp without Timezone</td><td>True</td><td>Activation date</td></tr>      
+        <tr><td>valid_from</td><td>Timestamp without Timezone</td><td>False</td><td>Valid from this date (contract)</td></tr>      
+        <tr><td>valid_to</td><td>Timestamp without Timezone</td><td>True</td><td>Valid to this date (contract). Null if not defined</td></tr>      
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the partners statuses description bellow</td></tr>      
+        <tr><td>title</td><td>String</td><td>False</td><td>Partner's short presentation (depends of language)</td></tr>      
+        <tr><td>presentation</td><td>String</td><td>False</td><td>Partner's full presentation (depends of language)</td></tr>      
+        <tr><td>keywords</td><td>String</td><td>True</td><td>Keywords used for research (usually comma separated)</td></tr>      
+        <tr><td>facebook</td><td>String</td><td>True</td><td>Facebook page</td></tr>      
+        <tr><td>website</td><td>String</td><td>True</td><td>Website address</td></tr>      
+        <tr><td>brands</td><td>String</td><td>True</td><td>Which brands are sold by this partner ? (usually comma separated values)</td></tr>
+        <tr><td>maximum_discount</td><td>Number</td><td>True</td><td>Maximum discount value in %</td></tr>      
+        <tr><td>minimum_discount</td><td>Number</td><td>True</td><td>Minimum discount value in %</td></tr>      
+        <tr><td>phone</td><td>String</td><td>True</td><td>Phone number of the first contact in partner's contacts list</td></tr>      
+    </tbody>
+</table>     
+   
+**Partner statuses (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>None</td></tr>      
+        <tr><td>SUSPENDED</td><td>1</td><td>Partner is suspended</td></tr>      
+    </tbody>
+</table>
+
+### List All Partners [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 578,
+                "name": "Sephora Luxembourg",
+                "slug": "-sephora-luxembourg",
+                "created_on": "2015-11-19 11:56:53",
+                "activated_on": "2015-11-19 11:56:53",
+                "valid_from": "2015-11-19 11:56:53",
+                "valid_to": "",
+                "status": 0,
+                "title": "Votre parfumerie",
+                "presentation": "présentation en français",
+                "keywords": "parfum, cosmétique, pour elle, pour femme, pour lui, pour homme",
+                "facebook": "www.facebook.com",
+                "website": "http://www.sephora.com",
+                "brands": "Hermes, Calvin Klein, Boss, ...",
+                "minimum_discount": 5,
+                "maximum_discount": 15,
+                "phone": "12 34 56 78"
+            }, {
+                "id": 618,
+                "name": "Pierre et vacances",
+                "slug": "-pierre-et-vacances",
+                "created_on": "2012-09-15 10:40:00",
+                "activated_on": "2012-09-15 10:40:00",
+                "valid_from": "2012-09-15 10:40:00",
+                "valid_to": "",
+                "status": 0,
+                "title": "",
+                "presentation": "présentation en français",
+                "keywords": "voyages, locations",
+                "facebook": "www.facebook.com",
+                "website": "http://ce.pv-holidays.com/",
+                "brands": "",
+                "minimum_discount": 0,
+                "maximum_discount": 40,
+                "phone": "12 34 56 78"
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+        
+## Partner [/api/partners/{partner_id_or_slug}]
+Get one Partner with his contacts and his current discounts
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>contacts</td><td>JSON</td><td>False</td><td>Array of partner's contacts</td></tr>
+        <tr><td>addresses</td><td>JSON</td><td>False</td><td>Array of partner's addresses</td></tr>
+        <tr><td>discounts</td><td>JSON</td><td>False</td><td>Array of partner's discounts</td></tr>
+    </tbody>
+</table>     
+
+### View a Partner details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + partner_id_or_slug (number|string) - ID or slug of the researched partner
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 578,
+                "name": "Sephora Luxembourg",
+                "slug": "-sephora-luxembourg",
+                "created_on": "2015-11-19 11:56:53",
+                "activated_on": "2015-11-19 11:56:53",
+                "valid_from": "2015-11-19 11:56:53",
+                "valid_to": "",
+                "status": 0,
+                "title": "Votre parfumerie",
+                "presentation": "<p><strong>présentation en français</strong></p>",
+                "keywords": "parfum, cosm\u00e9tique, pour elle, pour femme, pour lui, pour homme",
+                "facebook": "www.facebook.com",
+                "website": "http://www.sephora.com",
+                "brands": "Hermes, Calvin Klein, Boss, ...",
+                "contacts": [
+                    {
+                        "id": 40
+                        "client_id": 578,
+                        "gender": "female",
+                        "name": "Betty Rebecca",
+                        "email": "mag0160@sephora.fr",
+                        "phone": "12 34 56 78",
+                        "fax": "98 76 54 32",
+                        "type": 1
+                    }
+                ],
+                "addresses": [
+                    {
+                        "id": 2299,
+                        "title": "Boutique",
+                        "reference": "",
+                        "is_head_quarter": true,
+                        "street": "16 avenue de la gare",
+                        "additional_details": "",
+                        "locality": "Luxembourg",
+                        "postal_code" : "L-1610",
+                        "country" : "LU",
+                        "longitude" : 5.9294,
+                        "latitude" : 49.9665
+                    }, {
+                        "id": 2298,
+                        "title": "Boutique",
+                        "reference": "",
+                        "is_head_quarter": false,
+                        "street": "73 GRAND-RUE",
+                        "additional_details": "",
+                        "locality": "Luxembourg",
+                        "postal_code" : "L-1610",
+                        "country" : "LU",
+                        "longitude" : 6.12851,
+                        "latitude" : 49.6121
+                    }, {
+                        "id": 2297,
+                        "title": "Boutique",
+                        "reference": "",
+                        "is_head_quarter": false,
+                        "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
+                        "additional_details": "",
+                        "locality": "Kirchberg",
+                        "postal_code" : "L-2721",
+                        "country" : "LU",
+                        "longitude" : 49.6331,
+                        "latitude" : 49.9665
+                    }, {
+                        "id": 2296,
+                        "title": "Boutique",
+                        "reference": "",
+                        "is_head_quarter": false,
+                        "street": "69 rue de l'Alzette",
+                        "additional_details": "",
+                        "locality": "Esch-sur-alzette",
+                        "postal_code" : "L-1610",
+                        "country" : "LU",
+                        "longitude" : 5.98058,
+                        "latitude" : 49.4937
+                    }
+                ],
+                "discounts": [
+                    {
+                        "id": 5280,
+                        "title": "Limited offer",
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                        "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                        "countries": 1,
+                        "minimum": 10,
+                        "maximum": 20,
+                        "valid_from": "2016-01-07 00:00:00",
+                        "valid_to": "2016-01-15 00:00:00",
+                        "flags": 1,
+                        "type": 2,
+                        "status": 0
+                    },
+                    {
+                        "id": 5280,
+                        "title": "Permanent offer",
+                        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                        "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                        "countries": 3,
+                        "minimum": 5,
+                        "maximum": 15,
+                        "valid_from": "",
+                        "valid_to": "",
+                        "flags": 0,
+                        "type": 2,
+                        "status": 0
+                    }
+                ]
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]        
+        
+        
+        
+    
+
+## Addresses Collection [/api/addresses/{holder_type}/{client_id}]
+Addresses will be used for partners geolocalization e.g. if holder type is 'partner'
+Or used to populate a dropdown of client addresses list in member profile e.g. if holder type is 'client'
+
+**Address attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
+        <tr><td>client_id</td><td>Number</td><td>False</td><td>Client / Partner id. Can be used to route to the partner custom page</td></tr>
+        <tr><td>client_slug</td><td>String</td><td>False</td><td>Unique identifier based on the Client / Partner name. Can be used to route to the partner custom page</td></tr>
+        <tr><td>client_name</td><td>Stringr</td><td>False</td><td>Client / Partner name</td></tr>      
+        <tr><td>is_head_quarter</td><td>Boolean</td><td>True</td><td>Is this address main Partner address ? Only one address per Partner is possible</td></tr>
+        <tr><td>title</td><td>String</td><td>False</td><td>Address denomination</td></tr>
+        <tr><td>street</td><td>String</td><td>False</td><td>Street + number</td></tr>      
+        <tr><td>additional_details</td><td>String</td><td>True</td><td>Floor 2, Apt 1 e.g.</td></tr>      
+        <tr><td>locality</td><td>String</td><td>False</td><td>Address city</td></tr>      
+        <tr><td>postal_code</td><td>String</td><td>False</td><td>Alnum Postal code</td></tr>      
+        <tr><td>country</td><td>String</td><td>False</td><td>Country ISO Code (2 chars uppercase)</td></tr>      
+        <tr><td>longitude</td><td>Float</td><td>True</td><td>Longitude</td></tr>      
+        <tr><td>latitude</td><td>Float</td><td>True</td><td>Latitude</td></tr>      
+    </tbody>
+</table>     
+   
+   
+### List All Addresses [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + holder_type (string) - type of address holder. Can be 'client' or 'partner'
+    + id_or_slug (number|string) - ID or slug of the researched client's addresses
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 2299,
+                "partner_id": 578,
+                "partner_name": "Sephora",
+                "partner_slug": "-sephora",
+                "title": "Boutique",
+                "is_head_quarter": true,
+                "street": "16 avenue de la gare",
+                "additional_details": "",
+                "locality": "Luxembourg",
+                "postal_code" : "L-1610",
+                "country" : "LU",
+                "longitude" : 5.9294,
+                "latitude" : 49.9665
+            }, {
+                "id": 2298,
+                "partner_id": 578,
+                "partner_name": "Sephora",
+                "partner_slug": "-sephora",
+                "title": "Boutique",
+                "is_head_quarter": false,
+                "street": "73 GRAND-RUE",
+                "additional_details": "",
+                "locality": "Luxembourg",
+                "postal_code" : "L-1610",
+                "country" : "LU",
+                "longitude" : 6.12851,
+                "latitude" : 49.6121
+            }, {
+                "id": 2297,
+                "partner_id": 578,
+                "partner_name": "Sephora",
+                "partner_slug": "-sephora",
+                "title": "Boutique",
+                "is_head_quarter": false,
+                "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
+                "additional_details": "",
+                "locality": "Kirchberg",
+                "postal_code" : "L-2721",
+                "country" : "LU",
+                "longitude" : 49.6331,
+                "latitude" : 49.9665
+            }, {
+                "id": 2296,
+                "partner_id": 578,
+                "partner_name": "Sephora",
+                "partner_slug": "-sephora",
+                "title": "Boutique",
+                "is_head_quarter": false,
+                "street": "69 rue de l'Alzette",
+                "additional_details": "",
+                "locality": "Esch-sur-alzette",
+                "postal_code" : "L-1610",
+                "country" : "LU",
+                "longitude" : 5.98058,
+                "latitude" : 49.4937
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+## Address [/api/addresses/{id_or_slug}]
+Get one Address
+
+### View an address details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + id_or_slug (number|string) - ID or slug of the researched partner's addresses
+   
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 2296,
+                "partner_id": 578,
+                "partner_name": "Sephora",
+                "partner_slug": "-sephora",
+                "title": "Boutique",
+                "is_head_quarter": false,
+                "street": "69 rue de l'Alzette",
+                "additional_details": "",
+                "locality": "Esch-sur-alzette",
+                "postal_code" : "L-1610",
+                "country" : "LU",
+                "longitude" : "5.98058",
+                "latitude" : "49.4937"
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+
+
+
+## Services Collection [/api/services]
+Get all ticketing and conciergerie services
+
+**Service attributes:**
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
+        <tr><td>name</td><td>String</td><td>False</td><td>Service name</td></tr>      
+        <tr><td>slug</td><td>String</td><td>False</td><td>Unique identifier based on the Service internal name</td></tr>
+        <tr><td>default_description</td><td>String</td><td>True</td><td>Service description</td></tr>
+        <tr><td>tagline</td><td>String</td><td>True</td><td>A short service tagline</td></tr>
+        <tr><td>type</td><td>Number</td><td>False</td><td>* Check the services types description bellow</td></tr>      
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the services statuses description bellow</td></tr>
+        <tr><td>options</td><td>Number</td><td>False</td><td>* Check the services options description bellow</td></tr>
+        <tr><td>closed_from</td><td>Timestamp without Timezone</td><td>True</td><td>A programmed closed date</td></tr>
+        <tr><td>closed_to</td><td>Timestamp without Timezone</td><td>True</td><td>A programmed reopen date</td></tr>      
+    </tbody>
+</table>     
+
+**Service types (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>TICKETING</td><td>2</td><td>Service is a ticketing service</td></tr>      
+        <tr><td>CONCIERGERIE</td><td>4</td><td>Service is a conciergerie service</td></tr>      
+    </tbody>
+</table>
+
+**Service statuses (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>None</td></tr>      
+        <tr><td>SUSPENDED</td><td>1</td><td>Service has been suspended and will not be displayed (!= CLOSED)</td></tr>      
+        <tr><td>CLOSED</td><td>2</td><td>Service is closed for a period</td></tr>      
+    </tbody>
+</table>
+
+**Service options (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>None</td></tr>      
+        <tr><td>NEEDS_DELIVERY_DOCKET</td><td>1</td><td>Service needs a delivery docket from the provider</td></tr>      
+    </tbody>
+</table>
+
+### List All Services [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 26,
+                "name": "Blanchisserie",
+                "slug": "blanchisserie-bgl"
+                "default_description": "La blanchisserie vous accueille tous les jours de 08 à 16h ...",
+                "tagline": "",
+                "type": 4,
+                "status": 0,
+                "options": 1,
+                "closed_from": "",
+                "closed_to": ""
+            },
+            {
+                "id": 52,
+                "name": "Billetterie",
+                "slug": "billetterie-sympass"
+                "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
+                "tagline": "La billetterie Sympass, c'est sympass !",
+                "type": 2,
+                "status": 0,
+                "closed_from": "",
+                "closed_to": ""
+            }
+        ]
+        
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+        
+## Service [/api/services/{service_id_or_slug}]
+Get one service
+
+### View one service details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + service_id_or_slug (number|string) - ID or slug of the researched service
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 52,
+                "name": "Billetterie",
+                "slug": "billetterie-sympass"
+                "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
+                "tagline": "La billetterie Sympass, c'est sympass !",
+                "type": 2,
+                "status": 0,
+                "closed_from": "",
+                "closed_to": ""
+            }
+        ]
+       
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+        
+## Products Categories Collection [/api/products-categories/{service_id_or_slug}]
+Categories for a given service
+
+**Category attributes:**
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
+        <tr><td>name</td><td>String</td><td>False</td><td>Category name</td></tr>      
+        <tr><td>description</td><td>String</td><td>True</td><td>Category description (not used for now)</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the categories statuses description bellow</td></tr>
+        <tr><td>icon</td><td>String</td><td>True</td><td>A css class name related to a specific icon</td></tr>
+    </tbody>
+</table>     
+
+**Category statuses (not combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>NONE</td><td>0</td><td>None</td></tr>      
+        <tr><td>SUSPENDED</td><td>1</td><td>Category has been suspended and will not be displayed</td></tr>      
+    </tbody>
+</table>
+
+### List All Products Categories [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + service_id_or_slug (number|string) - ID or slug of the researched service
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 232,
+                "name": "Bien être",
+                "description": "",
+                "status": 0,
+                "icon": "icon-bien-etre"
+            },
+                "id": 233,
+                "name": "Zoos",
+                "description": "",
+                "status": 0,
+                "icon": "icon-zoos"
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+        
+## Product Category [/api/products-categories/{service_id_or_slug}/{category_id}]
+Get one category
+
+### View one category details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + service_id_or_slug (number|string) - ID or slug of the researched service
+    + category_id (number) - ID of the researched category
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 233,
+                "name": "Zoos",
+                "description": "",
+                "status": 0,
+                "icon": "icon-zoos"
+            }
+        ]
+       
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+        
+## Products Collection [/api/products/{service_id_or_slug}/{category_id}]
+Products are linked to services throw categories.
+Api will only send ACTIVE and AVAILABLE products (status = 3)
+
+**Product attributes:**
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
+        <tr><td>partner_name</td><td>String</td><td>True</td><td>Partner name</td></tr>      
+        <tr><td>name</td><td>Boolean</td><td>True</td><td>Product name</td></tr>
+        <tr><td>description</td><td>String</td><td>True</td><td>What's this product</td></tr>
+        <tr><td>tagline</td><td>String</td><td>True</td><td>A short product tagline</td></tr>
+        <tr><td>public_price</td><td>Float</td><td>True</td><td>Partner sell this product at this price (include tax)</td></tr>      
+        <tr><td>price_including_tax</td><td>Float</td><td>False</td><td>Is the price for a given category > subcategory with tax</td></tr>      
+        <tr><td>status</td><td>Float</td><td>False</td><td>* Check the product statuses description bellow. A sellable product must to be active AND available</td></tr>
+        <tr><td>service (for one product)</td><td>String</td><td>False</td><td>Product is in this service</td></tr>      
+        <tr><td>category (for one product)</td><td>String</td><td>False</td><td>Product is in this category</td></tr>      
+    </tbody>
+</table>     
+
+**Product statuses (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>ACTIVE</td><td>1</td><td>Product has been activated on the platform</td></tr>      
+        <tr><td>AVAILABLE</td><td>2</td><td>Product is available</td></tr>      
+    </tbody>
+</table>
+
+### List All Service Category Products [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + service_id_or_slug (number|string) - ID or slug of the researched service
+    + category_id (number) - ID of the researched category
+    + id (number) - ID of the researched product
+   
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 77234,
+                "partner_name": "Villa pompei",
+                "name": "Villa pompei 2h",
+                "description": "<p>Les peignoirs et essuies ne sont pas compris dans l'entr&eacute;e&nbsp;<\/p>\r\n<p>sans date de validit&eacute;<\/p>",
+                "tagline": "",
+                "public_price": 24.9,
+                "price_including_tax": 21.5,
+                "status": 3
+            },
+            {
+                "id": 77330,
+                "partner_name": "Mondorf",
+                "name": "Mondorf domaine thermal, Gift box silver",
+                "description": "<p><strong>Validit&eacute;&nbsp;<strong>22.12.2016<\/strong><\/strong><\/p>\r\n<p>Trois types de prestations au choix: le FORFAIT SPA, le PLAISIR DETENTE OU GOURMAND ou bien le COFFRET de PRODUITS SPA&nbsp;:<\/p>\r\n<p>-&nbsp;&nbsp;",
+                "tagline": "",
+                "public_price": 105,
+                "price_including_tax": 95,
+                "status": 3
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
+## Product [/api/products/{service_id_or_slug}/{category_id}/{product_id}]
+Get one Service Category Product
+
+### View one Service Category Product details [GET]
+
++ Request
+
+    + Headers
+    
+            lang: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Parameters
+
+    + service_id_or_slug (number|string) - ID or slug of the researched service
+    + category_id (number) - ID of the researched category
+    + id (number) - ID of the researched product
+   
++ Response 200 (application/json)
+
+        [
+            {
+                "id": 77238,
+                "partner_name": "Zoo amnéville",
+                "name": "Zoo amnéville adulte",
+                "description": "<p>12 ans et plus. validit&eacute;: non limit&eacute;e Ouvert toute l'ann&eacute;e.<\/p>",
+                "tagline": "",
+                "public_price": 35,
+                "price_including_tax": 25.4,
+                "status": 3,
+                "service": "Billetterie",
+                "category": "Zoos"
+            }
+        ]
+
++ Response 401 (application/json)  
+
+        [
+            {  
+                "error": "Unauthorized",
+                "error_description": "Access token has expired or has been deleted"
+            }  
+        ]
+
