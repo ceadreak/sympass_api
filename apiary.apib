@@ -7,16 +7,14 @@ For each API request except the request token API, there are 2 mandatory http he
 - lang > Is an ISO(2) language code (fr | en | de | ...)
 - token > Is the member's unique token
 
-**TODO**
-> Etat des Economies : JSON avec {Date: ..., Valeur: ...€} => champ entité Member <br>
-> Dans API Member, ajouter date de validité de la carte (fin de validité du client ou fin de validité du contrat membre) <br>
+**TODO WEB**
+> Script calcul coordonnées geo partenaires + update sauvegarde pour calcul auto<br>
+> Calcul du montant économisé par membre + update sauvegarde pour montant économisé en billetterie <br>
+> Ajout propriété Member::hobbies <br>
+> Ajout répertoire public/img/app pour logo et bannières des partenaires version réduits + script conversion images existantes <br>
+
+**TODO DOC**
 > Récupération du montant "normal" + montant avec réduction + date + partenaire à l'enregistremrent d'un achat <br>
-> Dans API Partenaire, revoyer un lien vers le logo et la banières du partenaire <br>
-> Bannières partenaires : reduire poids des logos et banières (répertoire à part)<br>
-> ID Service billetterie principale à la récupération du member<br>
-> Ajouter contacts / adresses dans la Partners COllection<br>
-> Dans un discount + collectection discounts : ajouter JSON categories<br>
-> Dans Member : rajouter "conciergerie alert" avec le nombre de commandes à venir retirer par le membre<br>
 > Pour les objets uniques, pas de liste > dictionnaire <br>
 > Api Discounts : Ne pas retourner les discounts type ONLINE
  
@@ -121,8 +119,10 @@ Each member has a Sympass ID Card.
         <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation datetime</td></tr>      
         <tr><td>deactivated_on</td><td>Timestamp without Timezone</td><td>True</td><td>Deactivation datetime</td></tr>      
         <tr><td>activated_on</td><td>Timestamp without Timezone</td><td>True</td><td>First activation datetime</td></tr>
-        <tr><td>saved_amount</td><td>Float</td><td>True</td><td>Member's saved amount (combination of partner purshases and ticketing purchases)</td></tr>      
-        <tr><td>hobbies</td><td>Number</td><td>False</td><td>* Check the members hobbies description bellow</td></tr>      
+        <tr><td>saved_amount</td><td>JSON</td><td>True</td><td>Member's saved amount (combination of partner purshases and ticketing purchases)</td></tr>      
+        <tr><td>hobbies</td><td>Number</td><td>True</td><td>* Check the members hobbies description bellow</td></tr>      
+        <tr><td>ticketing_id</td><td>Number</td><td>False</td><td>Main ticketing service ID</td></tr>      
+        <tr><td>conciergerie_alert</td><td>Number</td><td>True</td><td>Number of "pending" services (Order lines are in "BROUGHT BACK" status)</td></tr>      
     </tbody>
 </table>     
 
@@ -164,7 +164,15 @@ Each member has a Sympass ID Card.
 <table>  
     <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
     <tbody>
-        <tr><td>TODO</td><td>1</td><td>...</td></tr>      
+        <tr><td>NONE</td><td>0</td><td>Member is focused by nothing</td></tr>      
+        <tr><td>HOBBY_SPORT</td><td>1</td><td>Member is focused by sport</td></tr>      
+        <tr><td>HOBBY_TRAVELING</td><td>2</td><td>Member is focused by traveling</td></tr>      
+        <tr><td>HOBBY_GASTRONOMY</td><td>4</td><td>Member is focused by gastronomy</td></tr>      
+        <tr><td>HOBBY_OUTGOING</td><td>8</td><td>Member is focused by outgoing</td></tr>      
+        <tr><td>HOBBY_KNOWLEDGE</td><td>16</td><td>Member is focused by knowledge</td></tr>      
+        <tr><td>HOBBY_MODE</td><td>32</td><td>Member is focused by mode</td></tr>      
+        <tr><td>HOBBY_HEALTH</td><td>64</td><td>Member is focused by health</td></tr>      
+        <tr><td>HOBBY_SERVICES</td><td>128</td><td>Member is focused by services</td></tr>      
     </tbody>
 </table>
 
@@ -175,6 +183,7 @@ Each member has a Sympass ID Card.
 - deactivated_on is value is not set or is greather than now
 - valid_from value is less than now
 - valid_to value is greather than now
+- <b>The "last_update" response value is the modified_on member date converted to a Unix Timestamp</b>
 
 ### Member [GET]
 
@@ -187,25 +196,26 @@ Each member has a Sympass ID Card.
 
 + Response 200 (application/json)
 
-        [
-            {
+        {
+            "status": 0,
+            "message": "",
+            "last_update": 1002902098,
+            "data": {
                 "id": 101905,
                 "client_name": "Emresa",
                 "client_slug": "-emresa",
-                "address": [
-                    {
-                        "id": 562,
-                        "title": "Siège",
-                        "is_head_quarter": true,
-                        "street": "63 route du canal",
-                        "additional_details": "",
-                        "locality": "Luxembourg",
-                        "postal_code" : "L-1610",
-                        "country" : "LU",
-                        "longitude" : "5.9294",
-                        "latitude" : "49.9665"
-                    }
-                ],
+                "address": {
+                    "id": 562,
+                    "title": "Siège",
+                    "is_head_quarter": true,
+                    "street": "63 route du canal",
+                    "additional_details": "",
+                    "locality": "Luxembourg",
+                    "postal_code" : "L-1610",
+                    "country" : "LU",
+                    "longitude" : 5.9294,
+                    "latitude" : 49.9665
+                },
                 "sympass_id": "6199318",
                 "login": "6199318",
                 "password": "acd36663cc98e4a18664b892b344fac9",
@@ -227,23 +237,33 @@ Each member has a Sympass ID Card.
                 "created_on": "2014-04-07 17:15:36",
                 "deactivated_on": "",
                 "activated_on": "2015-04-17 00:00:14",
-                "amount_saved": 123.50,
-                "hobbies": 17
+                "amount_saved": [
+                    {
+                        "date": "2016-01-17 13:30:00",
+                        "amount": 34.46 
+                    },
+                    {
+                        "date": "2016-01-19 12:30:00",
+                        "amount": 26.00 
+                    }
+                ],
+                "hobbies": 17,
+                "ticketing_id": 52,
+                "conciergerie_alert": 3
             }
-        ]
+        }
         
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+        
 
 ### Update Member [PUT]
-TODO - Mise à jour des infos du membre
-TODO - Mise à jour du montant économisé
+*TODO - Mise à jour des infos du membre* <br>
+*TODO - Mise à jour du montant économisé REVOIR CELA AVEC NEOPIXL*
 
 + Request
 
@@ -343,41 +363,46 @@ List all orders for a given member (in http headers parameters)
 
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 33,
-                "reference": "S-000000033",
-                "status": 1,
-                "created_on": "2016-01-11 17:04:29",
-                "modified_on": "2016-01-11 17:24:28",
-                "placed_on": "",
-                "completed_on": "",
-                "total_excl_tax": 27.23,
-                "total_tax": 0.62,
-                "total_incl_tax": 27.85
-            },
-            {
-                "id": 67,
-                "reference": "S-000000067",
-                "status": 128,
-                "created_on": "2016-01-12 12:04:29",
-                "modified_on": "2016-01-12 13:24:28",
-                "placed_on": "",
-                "completed_on": "",
-                "total_excl_tax": 30,
-                "total_tax": 0,
-                "total_incl_tax": 30
+        {
+            "status": 0,
+            "message": "",
+            "data": {
+                [
+                    {
+                        "id": 33,
+                        "reference": "S-000000033",
+                        "status": 1,
+                        "created_on": "2016-01-11 17:04:29",
+                        "modified_on": "2016-01-11 17:24:28",
+                        "placed_on": "",
+                        "completed_on": "",
+                        "total_excl_tax": 27.23,
+                        "total_tax": 0.62,
+                        "total_incl_tax": 27.85
+                    },
+                    {
+                        "id": 67,
+                        "reference": "S-000000067",
+                        "status": 128,
+                        "created_on": "2016-01-12 12:04:29",
+                        "modified_on": "2016-01-12 13:24:28",
+                        "placed_on": "",
+                        "completed_on": "",
+                        "total_excl_tax": 30,
+                        "total_tax": 0,
+                        "total_incl_tax": 30
+                    }
+                ]   
             }
-        ]
+        }
 
 + Response 401 (application/json)  
-
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+        
 
 ## Order [/api/orders/{order_id}]
 Get one order
@@ -468,8 +493,10 @@ Orders are based on 3 levels :
     
 + Response 200 (application/json)
 
-        [
-            {
+        {
+            "status": 0,
+            "message": "",
+            "data": {
                 "id": 33,
                 "reference": "S-000000033",
                 "status": 1,
@@ -517,20 +544,18 @@ Orders are based on 3 levels :
                     }
                 ]
             }
-        ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
 
 
 
-## Discounts Collection [/api/discounts]
+## Discounts Collection [/api/discounts/{modified_since}]
 Discounts are available to partners.
 A discount can be a limited in time discount, with a date from and a date to availability.
 API Discounts request will only fetch the active discounts
@@ -559,6 +584,7 @@ API Discounts request will only fetch the active discounts
         <tr><td>flags</td><td>String</td><td>False</td><td>* Check the discounts flags description bellow</td></tr>
         <tr><td>type</td><td>Number</td><td>False</td><td>* Check the discounts types description bellow</td></tr>
         <tr><td>status</td><td>Number</td><td>False</td><td>* Check the discounts statuses description bellow</td></tr>
+        <tr><td>categories</td><td>JSON</td><td>False</td><td>Categories list related to a discount</td></tr>
     </tbody>
 </table>     
    
@@ -616,53 +642,76 @@ API Discounts request will only fetch the active discounts
             lang: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
++ Parameters
+
+    + modified_since (number) - get all updated discounts since this timestamp
+
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 5280,
-                "partner_name": "Sephora Luxembourg",
-                "partner_id": 578,
-                "partner_slug": "-sephora-luxembourg",
-                "title": "Limited offer",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                "countries": 1,
-                "minimum": 10,
-                "maximum": 20,
-                "valid_from": "2016-01-07 00:00:00",
-                "valid_to": "2016-01-15 00:00:00",
-                "flags": 1,
-                "type": 2,
-                "status": 0
-            },
-            {
-                "id": 5280,
-                "partner_name": "Sephora Luxembourg",
-                "partner_id": 578,
-                "partner_slug": "-sephora-luxembourg",
-                "title": "Permanent offer",
-                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                "countries": 3,
-                "minimum": 10,
-                "maximum": 20,
-                "valid_from": "",
-                "valid_to": "",
-                "flags": 0,
-                "type": 2,
-                "status": 0
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data": {
+            [
+                {
+                    "id": 5280,
+                    "partner_name": "Sephora Luxembourg",
+                    "partner_id": 578,
+                    "partner_slug": "-sephora-luxembourg",
+                    "title": "Limited offer",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                    "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                    "countries": 1,
+                    "minimum": 10,
+                    "maximum": 20,
+                    "valid_from": "2016-01-07 00:00:00",
+                    "valid_to": "2016-01-15 00:00:00",
+                    "flags": 1,
+                    "type": 2,
+                    "status": 0,
+                    "categories": [
+                        {
+                            "first_level": "beaué, santé, bien-être",
+                            "second_level": "parfumeries, cosmétiques"
+                        },
+                        {
+                            "first_level": "sports, activité",
+                            "second_level": "paintball ..."
+                        }
+                    ]
+                },
+                {
+                    "id": 5280,
+                    "partner_name": "Sephora Luxembourg",
+                    "partner_id": 578,
+                    "partner_slug": "-sephora-luxembourg",
+                    "title": "Permanent offer",
+                    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                    "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
+                    "countries": 3,
+                    "minimum": 10,
+                    "maximum": 20,
+                    "valid_from": "",
+                    "valid_to": "",
+                    "flags": 0,
+                    "type": 2,
+                    "status": 0,
+                    "categories": [
+                        {
+                            "first_level": "beaué, santé, bien-être",
+                            "second_level": "parfumeries, cosmétiques"
+                        }
+                    ]
+                }
+            ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
 
 ## Discount [/api/discount/{discount_id}]
 Get one discount
@@ -682,8 +731,10 @@ Get one discount
     
 + Response 200 (application/json)
 
-        [
-            {
+        {
+            "status": 0,
+            "message": "",
+            "data": {
                 "id": 5280,
                 "partner_name": "Sephora Luxembourg",
                 "partner_id": 578,
@@ -698,9 +749,15 @@ Get one discount
                 "valid_to": "2016-01-15 00:00:00",
                 "flags": 1,
                 "type": 2,
-                "status": 0
+                "status": 0,
+                "categories": [
+                    {
+                        "first_level": "beaué, santé, bien-être",
+                        "second_level": "parfumeries, cosmétiques"
+                    }
+                ]
             }
-        ]
+        }
 
 + Response 401 (application/json)  
 
@@ -715,7 +772,7 @@ Get one discount
 
 
 
-## Partners Collection [/api/partners]
+## Partners Collection [/api/partners/{modified_since}]
 Partners are `clients` with a `partnership` contract. 
 
 **Partner attributes:**  
@@ -740,6 +797,8 @@ Partners are `clients` with a `partnership` contract.
         <tr><td>maximum_discount</td><td>Number</td><td>True</td><td>Maximum discount value in %</td></tr>      
         <tr><td>minimum_discount</td><td>Number</td><td>True</td><td>Minimum discount value in %</td></tr>      
         <tr><td>phone</td><td>String</td><td>True</td><td>Phone number of the first contact in partner's contacts list</td></tr>      
+        <tr><td>logo</td><td>String</td><td>False</td><td>A link to the partner logo</td></tr>      
+        <tr><td>banner</td><td>String</td><td>False</td><td>A link to the partner banner</td></tr>      
     </tbody>
 </table>     
    
@@ -762,57 +821,167 @@ Partners are `clients` with a `partnership` contract.
             lang: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
++ Parameters
+
+    + modified_since (number) - get all updated partners since this timestamp
+
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 578,
-                "name": "Sephora Luxembourg",
-                "slug": "-sephora-luxembourg",
-                "created_on": "2015-11-19 11:56:53",
-                "activated_on": "2015-11-19 11:56:53",
-                "valid_from": "2015-11-19 11:56:53",
-                "valid_to": "",
-                "status": 0,
-                "title": "Votre parfumerie",
-                "presentation": "présentation en français",
-                "keywords": "parfum, cosmétique, pour elle, pour femme, pour lui, pour homme",
-                "facebook": "www.facebook.com",
-                "website": "http://www.sephora.com",
-                "brands": "Hermes, Calvin Klein, Boss, ...",
-                "minimum_discount": 5,
-                "maximum_discount": 15,
-                "phone": "12 34 56 78"
-            }, {
-                "id": 618,
-                "name": "Pierre et vacances",
-                "slug": "-pierre-et-vacances",
-                "created_on": "2012-09-15 10:40:00",
-                "activated_on": "2012-09-15 10:40:00",
-                "valid_from": "2012-09-15 10:40:00",
-                "valid_to": "",
-                "status": 0,
-                "title": "",
-                "presentation": "présentation en français",
-                "keywords": "voyages, locations",
-                "facebook": "www.facebook.com",
-                "website": "http://ce.pv-holidays.com/",
-                "brands": "",
-                "minimum_discount": 0,
-                "maximum_discount": 40,
-                "phone": "12 34 56 78"
+        {
+            "status": 0,
+            "message": "",
+            "data": {
+                "new_or_updated_partners":
+                    [
+                        {
+                            "id": 578,
+                            "name": "Sephora Luxembourg",
+                            "slug": "-sephora-luxembourg",
+                            "created_on": "2015-11-19 11:56:53",
+                            "activated_on": "2015-11-19 11:56:53",
+                            "valid_from": "2015-11-19 11:56:53",
+                            "valid_to": "",
+                            "status": 0,
+                            "title": "Votre parfumerie",
+                            "presentation": "présentation en français",
+                            "keywords": "parfum, cosmétique, pour elle, pour femme, pour lui, pour homme",
+                            "facebook": "www.facebook.com",
+                            "website": "http://www.sephora.com",
+                            "brands": "Hermes, Calvin Klein, Boss, ...",
+                            "minimum_discount": 5,
+                            "maximum_discount": 15,
+                            "phone": "12 34 56 78",
+                            "logo": "https://www.sympass.lu/img/app/partners/logos/578.png",
+                            "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
+                            "contacts": [
+                                {
+                                    "id": 40
+                                    "client_id": 578,
+                                    "gender": "female",
+                                    "name": "Betty Rebecca",
+                                    "email": "mag0160@sephora.fr",
+                                    "phone": "12 34 56 78",
+                                    "fax": "98 76 54 32",
+                                    "type": 1
+                                }
+                            ],
+                            "addresses": [
+                                {
+                                    "id": 2299,
+                                    "title": "Boutique",
+                                    "reference": "",
+                                    "is_head_quarter": true,
+                                    "street": "16 avenue de la gare",
+                                    "additional_details": "",
+                                    "locality": "Luxembourg",
+                                    "postal_code" : "L-1610",
+                                    "country" : "LU",
+                                    "longitude" : 5.9294,
+                                    "latitude" : 49.9665
+                                }, {
+                                    "id": 2298,
+                                    "title": "Boutique",
+                                    "reference": "",
+                                    "is_head_quarter": false,
+                                    "street": "73 GRAND-RUE",
+                                    "additional_details": "",
+                                    "locality": "Luxembourg",
+                                    "postal_code" : "L-1610",
+                                    "country" : "LU",
+                                    "longitude" : 6.12851,
+                                    "latitude" : 49.6121
+                                }, {
+                                    "id": 2297,
+                                    "title": "Boutique",
+                                    "reference": "",
+                                    "is_head_quarter": false,
+                                    "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
+                                    "additional_details": "",
+                                    "locality": "Kirchberg",
+                                    "postal_code" : "L-2721",
+                                    "country" : "LU",
+                                    "longitude" : 49.6331,
+                                    "latitude" : 49.9665
+                                }, {
+                                    "id": 2296,
+                                    "title": "Boutique",
+                                    "reference": "",
+                                    "is_head_quarter": false,
+                                    "street": "69 rue de l'Alzette",
+                                    "additional_details": "",
+                                    "locality": "Esch-sur-alzette",
+                                    "postal_code" : "L-1610",
+                                    "country" : "LU",
+                                    "longitude" : 5.98058,
+                                    "latitude" : 49.4937
+                                }
+                            ]
+                        }, {
+                            "id": 618,
+                            "name": "Pierre et vacances",
+                            "slug": "-pierre-et-vacances",
+                            "created_on": "2012-09-15 10:40:00",
+                            "activated_on": "2012-09-15 10:40:00",
+                            "valid_from": "2012-09-15 10:40:00",
+                            "valid_to": "",
+                            "status": 0,
+                            "title": "",
+                            "presentation": "présentation en français",
+                            "keywords": "voyages, locations",
+                            "facebook": "www.facebook.com",
+                            "website": "http://ce.pv-holidays.com/",
+                            "brands": "",
+                            "minimum_discount": 0,
+                            "maximum_discount": 40,
+                            "phone": "12 34 56 78",
+                            "logo": "https://www.sympass.lu/img/app/partners/logos/618.png",
+                            "banner": "https://www.sympass.lu/img/app/partners/banners/618.png",
+                            "contacts": [
+                                {
+                                    "id": 40
+                                    "client_id": 578,
+                                    "gender": "female",
+                                    "name": "Betty Rebecca",
+                                    "email": "mag0160@sephora.fr",
+                                    "phone": "12 34 56 78",
+                                    "fax": "98 76 54 32",
+                                    "type": 1
+                                }
+                            ],
+                            "addresses": [
+                                {
+                                    "id": 2299,
+                                    "title": "Boutique",
+                                    "reference": "",
+                                    "is_head_quarter": true,
+                                    "street": "16 avenue de la gare",
+                                    "additional_details": "",
+                                    "locality": "Luxembourg",
+                                    "postal_code" : "L-1610",
+                                    "country" : "LU",
+                                    "longitude" : 5.9294,
+                                    "latitude" : 49.9665
+                                }
+                            ]
+                        }
+                    ],
+                "deleted_partners": [
+                    1,
+                    3,
+                    7,
+                    10,
+                    500
+                ]
             }
-        ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
 ## Partner [/api/partners/{partner_id_or_slug}]
 Get one Partner with his contacts and his current discounts
 
@@ -840,8 +1009,10 @@ Get one Partner with his contacts and his current discounts
     
 + Response 200 (application/json)
 
-        [
-            {
+        {
+            "status": 0,
+            "message": "",
+            "data": {
                 "id": 578,
                 "name": "Sephora Luxembourg",
                 "slug": "-sephora-luxembourg",
@@ -856,6 +1027,8 @@ Get one Partner with his contacts and his current discounts
                 "facebook": "www.facebook.com",
                 "website": "http://www.sephora.com",
                 "brands": "Hermes, Calvin Klein, Boss, ...",
+                "logo": "https://www.sympass.lu/img/app/partners/logos/578.png",
+                "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
                 "contacts": [
                     {
                         "id": 40
@@ -932,7 +1105,13 @@ Get one Partner with his contacts and his current discounts
                         "valid_to": "2016-01-15 00:00:00",
                         "flags": 1,
                         "type": 2,
-                        "status": 0
+                        "status": 0,
+                        "categories": [
+                            {
+                                "first_level": "beaué, santé, bien-être",
+                                "second_level": "parfumeries, cosmétiques"
+                            }
+                        ]
                     },
                     {
                         "id": 5280,
@@ -946,26 +1125,29 @@ Get one Partner with his contacts and his current discounts
                         "valid_to": "",
                         "flags": 0,
                         "type": 2,
-                        "status": 0
+                        "status": 0,
+                        "categories": [
+                            {
+                                "first_level": "beaué, santé, bien-être",
+                                "second_level": "parfumeries, cosmétiques"
+                            }
+                        ]
                     }
                 ]
             }
-        ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]        
-        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
         
         
     
 
-## Addresses Collection [/api/addresses/{holder_type}/{client_id}]
+## Addresses Collection [/api/addresses/{holder_type}/{id_or_slug}]
 Addresses will be used for partners geolocalization e.g. if holder type is 'partner'
 Or used to populate a dropdown of client addresses list in member profile e.g. if holder type is 'client'
 
@@ -1095,7 +1277,7 @@ Get one Address
 + Response 200 (application/json)
 
         [
-            {
+            
                 "id": 2296,
                 "partner_id": 578,
                 "partner_name": "Sephora",
