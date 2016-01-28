@@ -366,34 +366,32 @@ List all orders for a given member (in http headers parameters)
         {
             "status": 0,
             "message": "",
-            "data": {
-                [
-                    {
-                        "id": 33,
-                        "reference": "S-000000033",
-                        "status": 1,
-                        "created_on": "2016-01-11 17:04:29",
-                        "modified_on": "2016-01-11 17:24:28",
-                        "placed_on": "",
-                        "completed_on": "",
-                        "total_excl_tax": 27.23,
-                        "total_tax": 0.62,
-                        "total_incl_tax": 27.85
-                    },
-                    {
-                        "id": 67,
-                        "reference": "S-000000067",
-                        "status": 128,
-                        "created_on": "2016-01-12 12:04:29",
-                        "modified_on": "2016-01-12 13:24:28",
-                        "placed_on": "",
-                        "completed_on": "",
-                        "total_excl_tax": 30,
-                        "total_tax": 0,
-                        "total_incl_tax": 30
-                    }
-                ]   
-            }
+            "data": [
+                {
+                    "id": 33,
+                    "reference": "S-000000033",
+                    "status": 1,
+                    "created_on": "2016-01-11 17:04:29",
+                    "modified_on": "2016-01-11 17:24:28",
+                    "placed_on": "",
+                    "completed_on": "",
+                    "total_excl_tax": 27.23,
+                    "total_tax": 0.62,
+                    "total_incl_tax": 27.85
+                },
+                {
+                    "id": 67,
+                    "reference": "S-000000067",
+                    "status": 128,
+                    "created_on": "2016-01-12 12:04:29",
+                    "modified_on": "2016-01-12 13:24:28",
+                    "placed_on": "",
+                    "completed_on": "",
+                    "total_excl_tax": 30,
+                    "total_tax": 0,
+                    "total_incl_tax": 30
+                }
+            ]   
         }
 
 + Response 401 (application/json)  
@@ -651,8 +649,7 @@ API Discounts request will only fetch the active discounts
         {
             "status": 0,
             "message": "",
-            "data": {
-            [
+            "data": [
                 {
                     "id": 5280,
                     "partner_name": "Sephora Luxembourg",
@@ -831,140 +828,140 @@ Partners are `clients` with a `partnership` contract.
             "status": 0,
             "message": "",
             "data": {
-                "new_or_updated_partners":
-                    [
-                        {
-                            "id": 578,
-                            "name": "Sephora Luxembourg",
-                            "slug": "-sephora-luxembourg",
-                            "created_on": "2015-11-19 11:56:53",
-                            "activated_on": "2015-11-19 11:56:53",
-                            "valid_from": "2015-11-19 11:56:53",
-                            "valid_to": "",
-                            "status": 0,
-                            "title": "Votre parfumerie",
-                            "presentation": "présentation en français",
-                            "keywords": "parfum, cosmétique, pour elle, pour femme, pour lui, pour homme",
-                            "facebook": "www.facebook.com",
-                            "website": "http://www.sephora.com",
-                            "brands": "Hermes, Calvin Klein, Boss, ...",
-                            "minimum_discount": 5,
-                            "maximum_discount": 15,
-                            "phone": "12 34 56 78",
-                            "logo": "https://www.sympass.lu/img/app/partners/logos/578.png",
-                            "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
-                            "contacts": [
-                                {
-                                    "id": 40
-                                    "client_id": 578,
-                                    "gender": "female",
-                                    "name": "Betty Rebecca",
-                                    "email": "mag0160@sephora.fr",
-                                    "phone": "12 34 56 78",
-                                    "fax": "98 76 54 32",
-                                    "type": 1
-                                }
-                            ],
-                            "addresses": [
-                                {
-                                    "id": 2299,
-                                    "title": "Boutique",
-                                    "reference": "",
-                                    "is_head_quarter": true,
-                                    "street": "16 avenue de la gare",
-                                    "additional_details": "",
-                                    "locality": "Luxembourg",
-                                    "postal_code" : "L-1610",
-                                    "country" : "LU",
-                                    "longitude" : 5.9294,
-                                    "latitude" : 49.9665
-                                }, {
-                                    "id": 2298,
-                                    "title": "Boutique",
-                                    "reference": "",
-                                    "is_head_quarter": false,
-                                    "street": "73 GRAND-RUE",
-                                    "additional_details": "",
-                                    "locality": "Luxembourg",
-                                    "postal_code" : "L-1610",
-                                    "country" : "LU",
-                                    "longitude" : 6.12851,
-                                    "latitude" : 49.6121
-                                }, {
-                                    "id": 2297,
-                                    "title": "Boutique",
-                                    "reference": "",
-                                    "is_head_quarter": false,
-                                    "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
-                                    "additional_details": "",
-                                    "locality": "Kirchberg",
-                                    "postal_code" : "L-2721",
-                                    "country" : "LU",
-                                    "longitude" : 49.6331,
-                                    "latitude" : 49.9665
-                                }, {
-                                    "id": 2296,
-                                    "title": "Boutique",
-                                    "reference": "",
-                                    "is_head_quarter": false,
-                                    "street": "69 rue de l'Alzette",
-                                    "additional_details": "",
-                                    "locality": "Esch-sur-alzette",
-                                    "postal_code" : "L-1610",
-                                    "country" : "LU",
-                                    "longitude" : 5.98058,
-                                    "latitude" : 49.4937
-                                }
-                            ]
-                        }, {
-                            "id": 618,
-                            "name": "Pierre et vacances",
-                            "slug": "-pierre-et-vacances",
-                            "created_on": "2012-09-15 10:40:00",
-                            "activated_on": "2012-09-15 10:40:00",
-                            "valid_from": "2012-09-15 10:40:00",
-                            "valid_to": "",
-                            "status": 0,
-                            "title": "",
-                            "presentation": "présentation en français",
-                            "keywords": "voyages, locations",
-                            "facebook": "www.facebook.com",
-                            "website": "http://ce.pv-holidays.com/",
-                            "brands": "",
-                            "minimum_discount": 0,
-                            "maximum_discount": 40,
-                            "phone": "12 34 56 78",
-                            "logo": "https://www.sympass.lu/img/app/partners/logos/618.png",
-                            "banner": "https://www.sympass.lu/img/app/partners/banners/618.png",
-                            "contacts": [
-                                {
-                                    "id": 40
-                                    "client_id": 578,
-                                    "gender": "female",
-                                    "name": "Betty Rebecca",
-                                    "email": "mag0160@sephora.fr",
-                                    "phone": "12 34 56 78",
-                                    "fax": "98 76 54 32",
-                                    "type": 1
-                                }
-                            ],
-                            "addresses": [
-                                {
-                                    "id": 2299,
-                                    "title": "Boutique",
-                                    "reference": "",
-                                    "is_head_quarter": true,
-                                    "street": "16 avenue de la gare",
-                                    "additional_details": "",
-                                    "locality": "Luxembourg",
-                                    "postal_code" : "L-1610",
-                                    "country" : "LU",
-                                    "longitude" : 5.9294,
-                                    "latitude" : 49.9665
-                                }
-                            ]
-                        }
-                    ],
+                "new_or_updated_partners": [
+                    {
+                        "id": 578,
+                        "name": "Sephora Luxembourg",
+                        "slug": "-sephora-luxembourg",
+                        "created_on": "2015-11-19 11:56:53",
+                        "activated_on": "2015-11-19 11:56:53",
+                        "valid_from": "2015-11-19 11:56:53",
+                        "valid_to": "",
+                        "status": 0,
+                        "title": "Votre parfumerie",
+                        "presentation": "présentation en français",
+                        "keywords": "parfum, cosmétique, pour elle, pour femme, pour lui, pour homme",
+                        "facebook": "www.facebook.com",
+                        "website": "http://www.sephora.com",
+                        "brands": "Hermes, Calvin Klein, Boss, ...",
+                        "minimum_discount": 5,
+                        "maximum_discount": 15,
+                        "phone": "12 34 56 78",
+                        "logo": "https://www.sympass.lu/img/app/partners/logos/578.png",
+                        "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
+                        "contacts": [
+                            {
+                                "id": 40
+                                "client_id": 578,
+                                "gender": "female",
+                                "name": "Betty Rebecca",
+                                "email": "mag0160@sephora.fr",
+                                "phone": "12 34 56 78",
+                                "fax": "98 76 54 32",
+                                "type": 1
+                            }
+                        ],
+                        "addresses": [
+                            {
+                                "id": 2299,
+                                "title": "Boutique",
+                                "reference": "",
+                                "is_head_quarter": true,
+                                "street": "16 avenue de la gare",
+                                "additional_details": "",
+                                "locality": "Luxembourg",
+                                "postal_code" : "L-1610",
+                                "country" : "LU",
+                                "longitude" : 5.9294,
+                                "latitude" : 49.9665
+                            }, {
+                                "id": 2298,
+                                "title": "Boutique",
+                                "reference": "",
+                                "is_head_quarter": false,
+                                "street": "73 GRAND-RUE",
+                                "additional_details": "",
+                                "locality": "Luxembourg",
+                                "postal_code" : "L-1610",
+                                "country" : "LU",
+                                "longitude" : 6.12851,
+                                "latitude" : 49.6121
+                            }, {
+                                "id": 2297,
+                                "title": "Boutique",
+                                "reference": "",
+                                "is_head_quarter": false,
+                                "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
+                                "additional_details": "",
+                                "locality": "Kirchberg",
+                                "postal_code" : "L-2721",
+                                "country" : "LU",
+                                "longitude" : 49.6331,
+                                "latitude" : 49.9665
+                            }, {
+                                "id": 2296,
+                                "title": "Boutique",
+                                "reference": "",
+                                "is_head_quarter": false,
+                                "street": "69 rue de l'Alzette",
+                                "additional_details": "",
+                                "locality": "Esch-sur-alzette",
+                                "postal_code" : "L-1610",
+                                "country" : "LU",
+                                "longitude" : 5.98058,
+                                "latitude" : 49.4937
+                            }
+                        ]
+                    }, 
+                    {
+                        "id": 618,
+                        "name": "Pierre et vacances",
+                        "slug": "-pierre-et-vacances",
+                        "created_on": "2012-09-15 10:40:00",
+                        "activated_on": "2012-09-15 10:40:00",
+                        "valid_from": "2012-09-15 10:40:00",
+                        "valid_to": "",
+                        "status": 0,
+                        "title": "",
+                        "presentation": "présentation en français",
+                        "keywords": "voyages, locations",
+                        "facebook": "www.facebook.com",
+                        "website": "http://ce.pv-holidays.com/",
+                        "brands": "",
+                        "minimum_discount": 0,
+                        "maximum_discount": 40,
+                        "phone": "12 34 56 78",
+                        "logo": "https://www.sympass.lu/img/app/partners/logos/618.png",
+                        "banner": "https://www.sympass.lu/img/app/partners/banners/618.png",
+                        "contacts": [
+                            {
+                                "id": 40
+                                "client_id": 578,
+                                "gender": "female",
+                                "name": "Betty Rebecca",
+                                "email": "mag0160@sephora.fr",
+                                "phone": "12 34 56 78",
+                                "fax": "98 76 54 32",
+                                "type": 1
+                            }
+                        ],
+                        "addresses": [
+                            {
+                                "id": 2299,
+                                "title": "Boutique",
+                                "reference": "",
+                                "is_head_quarter": true,
+                                "street": "16 avenue de la gare",
+                                "additional_details": "",
+                                "locality": "Luxembourg",
+                                "postal_code" : "L-1610",
+                                "country" : "LU",
+                                "longitude" : 5.9294,
+                                "latitude" : 49.9665
+                            }
+                        ]
+                    }
+                ],
                 "deleted_partners": [
                     1,
                     3,
@@ -1054,7 +1051,8 @@ Get one Partner with his contacts and his current discounts
                         "country" : "LU",
                         "longitude" : 5.9294,
                         "latitude" : 49.9665
-                    }, {
+                    }, 
+                    {
                         "id": 2298,
                         "title": "Boutique",
                         "reference": "",
@@ -1066,7 +1064,8 @@ Get one Partner with his contacts and his current discounts
                         "country" : "LU",
                         "longitude" : 6.12851,
                         "latitude" : 49.6121
-                    }, {
+                    }, 
+                    {
                         "id": 2297,
                         "title": "Boutique",
                         "reference": "",
@@ -1078,7 +1077,8 @@ Get one Partner with his contacts and his current discounts
                         "country" : "LU",
                         "longitude" : 49.6331,
                         "latitude" : 49.9665
-                    }, {
+                    }, 
+                    {
                         "id": 2296,
                         "title": "Boutique",
                         "reference": "",
