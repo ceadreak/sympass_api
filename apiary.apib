@@ -275,7 +275,16 @@ Each member has a Sympass ID Card.
 + Request (application/json)
 
         {
-            "amount_saved": 30.50,
+            "amount_saved": [
+                    {
+                        "date": "2016-01-17 13:30:00",
+                        "amount": 34.46 
+                    },
+                    {
+                        "date": "2016-01-19 12:30:00",
+                        "amount": 26.00 
+                    }
+                ],
             "login": "Toto",
             "email_personal": "john@doe.com",
             "options": 3,
@@ -848,7 +857,7 @@ Partners are `clients` with a `partnership` contract.
                         "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
                         "contacts": [
                             {
-                                "id": 40
+                                "id": 40,
                                 "client_id": 578,
                                 "gender": "female",
                                 "name": "Betty Rebecca",
