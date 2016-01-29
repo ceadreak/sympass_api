@@ -78,7 +78,6 @@ Such as `grant_type=password&username=766123&password=766123`
             "token_type": "Bearer",
             "expires_in": 604800,
             "owner_id": 15298,
-            "refresh_token": "DUkXCmAG-emYOldelfxXpQUqmLx1WzcokiG1eSkY"
         }
         
 
@@ -226,8 +225,8 @@ Each member has a Sympass ID Card.
                 "email": "cedric@marketfinder.lu",
                 "email_personal": "",
                 "language": "fr",
-                "phone": "+33645999999",
-                "mobile": "+33645999999",
+                "phone": "",
+                "mobile": "",
                 "function": "",
                 "valid_from": "2015-04-17 00:00:00",
                 "valid_to": "",
@@ -237,8 +236,6 @@ Each member has a Sympass ID Card.
                 "created_on": "2014-04-07 17:15:36",
                 "deactivated_on": "",
                 "activated_on": "2015-04-17 00:00:14",
-                "total_economy": 33,
-                "total_cost": 59,
                 "amount_saved": [
                     {
                         "bought_on": "2016-01-19 12:30:00",
@@ -247,11 +244,11 @@ Each member has a Sympass ID Card.
                         "partner_name": "Sephora"
                     },
                     {
-                        "bought_on": "2016-01-21 14:30:00",
-                        "selling_price": 29,
-                        "reduced_price": 20,
-                        "partner_name": "Sephora"
-                    }
+                        "bought_on": "2016-01-20 12:12:00",
+                        "selling_price": 24,
+                        "reduced_price": 12,
+                        "partner_name": "Pierre et vacances"
+                    },
                 ],
                 "hobbies": 17,
                 "ticketing_service_id": 52,
@@ -268,8 +265,7 @@ Each member has a Sympass ID Card.
         
 
 ### Update Member [PUT]
-*TODO - Mise à jour des infos du membre* <br>
-*TODO - Mise à jour du montant économisé REVOIR CELA AVEC NEOPIXL*
+The App will sent a dict with some data to update in the Member entity
 
 + Request
 
@@ -283,13 +279,17 @@ Each member has a Sympass ID Card.
         {
             "amount_saved": [
                     {
-                        "date": "2016-01-17 13:30:00",
-                        "amount": 34.46 
+                        "bought_on": "2016-01-19 12:30:00",
+                        "selling_price": 26,
+                        "reduced_price": 20,
+                        "partner_name": "Sephora"
                     },
                     {
-                        "date": "2016-01-19 12:30:00",
-                        "amount": 26.00 
-                    }
+                        "bought_on": "2016-01-20 12:12:00",
+                        "selling_price": 24,
+                        "reduced_price": 12,
+                        "partner_name": "Pierre et vacances"
+                    },
                 ],
             "login": "Toto",
             "email_personal": "john@doe.com",
@@ -311,21 +311,16 @@ Each member has a Sympass ID Card.
     
 + Response 200 (application/json)
 
-        [
-            {
-                "update": "ok"
-            }
-        ]
-    
+        {
+            "update": "ok"
+        }
+     
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
 
 
 
@@ -693,7 +688,7 @@ API Discounts request will only fetch the active discounts
                     ]
                 },
                 {
-                    "id": 5281,
+                    "id": 5280,
                     "partner_name": "Sephora Luxembourg",
                     "partner_id": 578,
                     "partner_slug": "-sephora-luxembourg",
@@ -701,8 +696,8 @@ API Discounts request will only fetch the active discounts
                     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
                     "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
                     "countries": 3,
-                    "minimum": 0,
-                    "maximum": 25,
+                    "minimum": 10,
+                    "maximum": 20,
                     "valid_from": "",
                     "valid_to": "",
                     "flags": 0,
@@ -959,7 +954,7 @@ Partners are `clients` with a `partnership` contract.
                         ],
                         "addresses": [
                             {
-                                "id": 2295,
+                                "id": 2299,
                                 "title": "Boutique",
                                 "reference": "",
                                 "is_head_quarter": true,
@@ -968,8 +963,8 @@ Partners are `clients` with a `partnership` contract.
                                 "locality": "Luxembourg",
                                 "postal_code" : "L-1610",
                                 "country" : "LU",
-                                "longitude" : 5.7294,
-                                "latitude" : 49.7665
+                                "longitude" : 5.9294,
+                                "latitude" : 49.9665
                             }
                         ]
                     }
