@@ -185,6 +185,7 @@ Each member has a Sympass ID Card.
 - valid_from value is less than now
 - valid_to value is greather than now
 - <b>The "last_update" response value is the modified_on member date converted to a Unix Timestamp</b>
+- in_shop_orders insertion test query : insert into in_shop_orders (member_id, partnership_id, selling_price, reduced_price, created_on) values (101905, 55, 34.20, 30.00, now());
 
 ### Member [GET]
 
@@ -240,7 +241,7 @@ Each member has a Sympass ID Card.
                 "activated_on": "2015-04-17 00:00:14",
                 "total_amount_spent": 1233,
                 "total_amount_saved": 567,
-                "in_shop_amount_saved": [
+                "in_shop_orders": [
                     {
                         "created_on": "2016-01-19 12:30:00",
                         "selling_price": 26,
