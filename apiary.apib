@@ -118,7 +118,9 @@ Each member has a Sympass ID Card.
         <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation datetime</td></tr>      
         <tr><td>deactivated_on</td><td>Timestamp without Timezone</td><td>True</td><td>Deactivation datetime</td></tr>      
         <tr><td>activated_on</td><td>Timestamp without Timezone</td><td>True</td><td>First activation datetime</td></tr>
-        <tr><td>saved_amount</td><td>JSON</td><td>True</td><td>Member's saved amount (combination of partner purshases and ticketing purchases)</td></tr>      
+        <tr><td>total_amount_saved</td><td>Float</td><td>True</td><td>Sum of member's total amount saved for ticketing service and at partner's shop</td></tr>      
+        <tr><td>total_amount_spent</td><td>Float</td><td>True</td><td>Sum of member's total amount spent for ticketing service and at partner's shop</td></tr>      
+        <tr><td>in_shop_amount_saved</td><td>JSON</td><td>True</td><td>Member's saved amount at partner's shop</td></tr>      
         <tr><td>hobbies</td><td>Number</td><td>True</td><td>* Check the members hobbies description bellow</td></tr>      
         <tr><td>ticketing_id</td><td>Number</td><td>False</td><td>Main ticketing service ID</td></tr>      
         <tr><td>conciergerie_alert</td><td>Number</td><td>True</td><td>Number of "pending" services (Order lines are in "BROUGHT BACK" status)</td></tr>      
@@ -238,15 +240,15 @@ Each member has a Sympass ID Card.
                 "activated_on": "2015-04-17 00:00:14",
                 "total_amount_spent": 1233,
                 "total_amount_saved": 567,
-                "partner_amount_saved": [
+                "in_shop_amount_saved": [
                     {
-                        "bought_on": "2016-01-19 12:30:00",
+                        "created_on": "2016-01-19 12:30:00",
                         "selling_price": 26,
                         "reduced_price": 20,
                         "partner_name": "Sephora"
                     },
                     {
-                        "bought_on": "2016-01-20 12:12:00",
+                        "created_on": "2016-01-20 12:12:00",
                         "selling_price": 24,
                         "reduced_price": 12,
                         "partner_name": "Pierre et vacances"
@@ -281,13 +283,13 @@ The App will sent a dict with some data to update in the Member entity
         {
             "partner_amount_saved": [
                     {
-                        "bought_on": "2016-01-19 12:30:00",
+                        "created_on": "2016-01-19 12:30:00",
                         "selling_price": 26,
                         "reduced_price": 20,
                         "partner_name": "Sephora"
                     },
                     {
-                        "bought_on": "2016-01-20 12:12:00",
+                        "created_on": "2016-01-20 12:12:00",
                         "selling_price": 24,
                         "reduced_price": 12,
                         "partner_name": "Pierre et vacances"
