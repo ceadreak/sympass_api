@@ -67,8 +67,8 @@ Such as `grant_type=password&username=766123&password=766123`
     
             {
                 "grant_type": "password",
-                "username": "766123",
-                "password": "766123"
+                "username": "6199318",
+                "password": "6199318"
             }
         
 + Response 200 (application/json) 
@@ -644,6 +644,7 @@ API Discounts request will only fetch the active discounts
     <tbody>
         <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
         <tr><td>partner_id</td><td>Number</td><td>False</td><td>Partner unique identifier</td></tr>      
+        <tr><td>partnership_id</td><td>Number</td><td>False</td><td>Partnership unique identifier (used for "in shop orders" relation)</td></tr>      
         <tr><td>partner_name</td><td>String</td><td>False</td><td>Partner name</td></tr>      
         <tr><td>partner_slug</td><td>String</td><td>False</td><td>Unique identifier based on partner name</td></tr>
         <tr><td>description</td><td>String</td><td>False</td><td>Discount description</td></tr>
@@ -727,7 +728,8 @@ API Discounts request will only fetch the active discounts
                 {
                     "id": 5280,
                     "partner_name": "Sephora Luxembourg",
-                    "partner_id": 578,
+                    "partner_id": 583,
+                    "partnership_id": 55,
                     "partner_slug": "-sephora-luxembourg",
                     "title": "Limited offer",
                     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
@@ -754,7 +756,8 @@ API Discounts request will only fetch the active discounts
                 {
                     "id": 5280,
                     "partner_name": "Sephora Luxembourg",
-                    "partner_id": 578,
+                    "partner_id": 583,
+                    "partnership_id": 55,
                     "partner_slug": "-sephora-luxembourg",
                     "title": "Permanent offer",
                     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
@@ -808,7 +811,8 @@ Get one discount
             "data": {
                 "id": 5280,
                 "partner_name": "Sephora Luxembourg",
-                "partner_id": 578,
+                "partner_id": 583,
+                "partnership_id": 55,
                 "partner_slug": "-sephora-luxembourg",
                 "title": "Limited offer",
                 "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
@@ -849,6 +853,7 @@ Partners are `clients` with a `partnership` contract.
     <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
     <tbody>
         <tr><td>id</td><td>Number</td><td>False</td><td>Partner unique identifier</td></tr>      
+        <tr><td>partnership_id</td><td>Number</td><td>False</td><td>Partnership unique identifier (used for "in shop orders" relation)</td></tr>      
         <tr><td>name</td><td>String</td><td>False</td><td>Partner name</td></tr>      
         <tr><td>slug</td><td>String</td><td>False</td><td>Unique identifier based on partner name</td></tr>
         <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation date</td></tr>      
@@ -901,7 +906,8 @@ Partners are `clients` with a `partnership` contract.
             "data": {
                 "new_or_updated_partners": [
                     {
-                        "id": 578,
+                        "id": 583,
+                        "partnership_id": 55,
                         "name": "Sephora Luxembourg",
                         "slug": "-sephora-luxembourg",
                         "created_on": "2015-11-19 11:56:53",
@@ -985,7 +991,8 @@ Partners are `clients` with a `partnership` contract.
                         ]
                     }, 
                     {
-                        "id": 618,
+                        "id": 623,
+                        "partnership_id": 110,
                         "name": "Pierre et vacances",
                         "slug": "-pierre-et-vacances",
                         "created_on": "2012-09-15 10:40:00",
@@ -1081,7 +1088,8 @@ Get one Partner with his contacts and his current discounts
             "status": 0,
             "message": "",
             "data": {
-                "id": 578,
+                "id": 583,
+                "partnership_id": 55,
                 "name": "Sephora Luxembourg",
                 "slug": "-sephora-luxembourg",
                 "created_on": "2015-11-19 11:56:53",
