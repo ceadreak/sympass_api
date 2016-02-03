@@ -352,6 +352,7 @@ Orders are based on 3 levels :
         <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
         <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
         <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+        <tr><td>ordered_services</td><td>Json</td><td>False</td><td>Collection of customer ordered services</td></tr>      
     </tbody>
 </table>     
 
@@ -368,6 +369,54 @@ Orders are based on 3 levels :
         <tr><td>INVOICED</td><td>32</td><td>An invoice has been generated for this order</td></tr>      
         <tr><td>COMPLETE</td><td>64</td><td>The order process has been completed (this means that related invoice is POSTED)</td></tr>      
         <tr><td>LOCKED</td><td>128</td><td>The order cannot be modified, all lines have been handled</td></tr>      
+    </tbody>
+</table>
+
+**Ordered Services attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Ordered Service unique identifier</td></tr>      
+        <tr><td>service_name</td><td>Number</td><td>False</td><td>Related service name</td></tr>
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+        <tr><td>will_be_handled_on</td><td>Timestamp without Timezone</td><td>True</td><td>Estimated date of ordered service handling. e.g. next wednesday for ticketing service</td></tr>  
+        <tr><td>order_lines (only for a single order)</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
+    </tbody>
+</table>     
+
+**Order Lines attributes:**  
+
+<table>  
+    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>id</td><td>Number</td><td>False</td><td>Order Line unique identifier</td></tr>      
+        <tr><td>product_name</td><td>Number</td><td>False</td><td>Related product unique identifier</td></tr>
+        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the order lines statuses description bellow</td></tr>      
+        <tr><td>description</td><td>String</td><td>False</td><td>Description of the ordered product, usually, the product name</td></tr>
+        <tr><td>quantity</td><td>Number</td><td>False</td><td>Quantity of product for one line</td></tr>
+        <tr><td>price</td><td>Float</td><td>False</td><td>Price excluding tax per unit</td></tr>
+        <tr><td>vat_code</td><td>String</td><td>False</td><td>Accounting service formatted vat code</td></tr>
+        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
+        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
+        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
+    </tbody>
+</table>     
+
+**Order lines statuses (combinable):**  
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>PENDING</td><td>1</td><td>Line is waiting for a handling [Ticketing services & Concierge services]</td></tr>      
+        <tr><td>PREPARED</td><td>2</td><td>Order line is ready to be delivered. Only shippable products can be prepared [Ticketing services]</td></tr>      
+        <tr><td>SHIPPED</td><td>4</td><td>Order line has been shipped. Only prepared lines can be shipped [Ticketing services]</td></tr>      
+        <tr><td>PUTTED_DOWN</td><td>8</td><td>Member has put his articles down to be treated in a conciergerie service (laundry, ...) [Concierge services]</td></tr>      
+        <tr><td>CHECKED_OUT</td><td>16</td><td>Conciergerie partner has checked out the deposited member's articles [Concierge services]</td></tr>      
+        <tr><td>BROUGHT_BACK</td><td>32</td><td>Conciergerie partner has brought back the deposited and checked out member's articles [Concierge services]</td></tr>      
+        <tr><td>PICKED_UP</td><td>64</td><td>Order line has been picked up at place. e.g. A member comes to the sympass head quarter and pick up his ready for delivery tickets. e.g.2. A member comes to a conciergerie and pick up his articles. [Ticketing services & Concierge services]</td></tr>      
     </tbody>
 </table>
 
@@ -483,73 +532,6 @@ Orders are based on 3 levels :
 
 ## Order [/api/orders/{order_id}]
 Get one order
-
-**Order attributes:**  
-
-<table>  
-    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
-    <tbody>
-        <tr><td>id</td><td>Number</td><td>False</td><td>Order unique identifier</td></tr>      
-        <tr><td>reference</td><td>String</td><td>False</td><td>Unique order reference "S-0000[increment]"</td></tr>
-        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the orders statuses description bellow</td></tr>      
-        <tr><td>created_on</td><td>Timestamp without Timezone</td><td>False</td><td>Creation date</td></tr>      
-        <tr><td>modified_on</td><td>Timestamp without Timezone</td><td>False</td><td>Update date</td></tr>      
-        <tr><td>placed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Placed date</td></tr>      
-        <tr><td>completed_on</td><td>Timestamp without Timezone</td><td>True</td><td>Completion date</td></tr>      
-        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
-        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
-        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
-        <tr><td>ordered_services</td><td>Json</td><td>False</td><td>Collection of customer ordered services</td></tr>      
-    </tbody>
-</table>     
-
-**Ordered Services attributes:**  
-
-<table>  
-    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
-    <tbody>
-        <tr><td>id</td><td>Number</td><td>False</td><td>Ordered Service unique identifier</td></tr>      
-        <tr><td>service_name</td><td>Number</td><td>False</td><td>Related service name</td></tr>
-        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
-        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
-        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
-        <tr><td>will_be_handled_on</td><td>Timestamp without Timezone</td><td>True</td><td>Estimated date of ordered service handling. e.g. next wednesday for ticketing service</td></tr>  
-        <tr><td>order_lines (only for a single order)</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
-    </tbody>
-</table>     
-
-**Order Lines attributes:**  
-
-<table>  
-    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
-    <tbody>
-        <tr><td>id</td><td>Number</td><td>False</td><td>Order Line unique identifier</td></tr>      
-        <tr><td>product_name</td><td>Number</td><td>False</td><td>Related product unique identifier</td></tr>
-        <tr><td>status</td><td>Number</td><td>False</td><td>* Check the order lines statuses description bellow</td></tr>      
-        <tr><td>description</td><td>String</td><td>False</td><td>Description of the ordered product, usually, the product name</td></tr>
-        <tr><td>quantity</td><td>Number</td><td>False</td><td>Quantity of product for one line</td></tr>
-        <tr><td>price</td><td>Float</td><td>False</td><td>Price excluding tax per unit</td></tr>
-        <tr><td>vat_code</td><td>String</td><td>False</td><td>Accounting service formatted vat code</td></tr>
-        <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
-        <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
-        <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
-    </tbody>
-</table>     
-
-**Order lines statuses (combinable):**  
-
-<table>  
-    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
-    <tbody>
-        <tr><td>PENDING</td><td>1</td><td>Line is waiting for a handling [Ticketing services & Concierge services]</td></tr>      
-        <tr><td>PREPARED</td><td>2</td><td>Order line is ready to be delivered. Only shippable products can be prepared [Ticketing services]</td></tr>      
-        <tr><td>SHIPPED</td><td>4</td><td>Order line has been shipped. Only prepared lines can be shipped [Ticketing services]</td></tr>      
-        <tr><td>PUTTED_DOWN</td><td>8</td><td>Member has put his articles down to be treated in a conciergerie service (laundry, ...) [Concierge services]</td></tr>      
-        <tr><td>CHECKED_OUT</td><td>16</td><td>Conciergerie partner has checked out the deposited member's articles [Concierge services]</td></tr>      
-        <tr><td>BROUGHT_BACK</td><td>32</td><td>Conciergerie partner has brought back the deposited and checked out member's articles [Concierge services]</td></tr>      
-        <tr><td>PICKED_UP</td><td>64</td><td>Order line has been picked up at place. e.g. A member comes to the sympass head quarter and pick up his ready for delivery tickets. e.g.2. A member comes to a conciergerie and pick up his articles. [Ticketing services & Concierge services]</td></tr>      
-    </tbody>
-</table>
 
 ### View an Order details [GET]
 
