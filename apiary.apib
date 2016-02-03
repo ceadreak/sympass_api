@@ -331,7 +331,11 @@ The App will sent a dict with some data to update in the Member entity
 
 
 ## Orders Collection [/api/orders]
-List all orders for a given member (in http headers parameters)
+List all orders for a given member (in http header parameters)
+Orders are based on 3 levels : 
+- Order > Is the 1st level, contains a collection of ordered services
+    - Ordered Services > Is the 2nd level, contains a collection of order lines
+        - Order Lines > Is the 3rd level, contains products, price, description
 
 **Order attributes:**  
 
@@ -391,7 +395,7 @@ List all orders for a given member (in http headers parameters)
                     "placed_on": "",
                     "completed_on": "",
                     "total_excl_tax": 27.23,
-                    "total_tax": 0.62,
+                    "total_vat": 0.62,
                     "total_incl_tax": 27.85,
                     "ordered_services": [
                         {
@@ -479,10 +483,6 @@ List all orders for a given member (in http headers parameters)
 
 ## Order [/api/orders/{order_id}]
 Get one order
-Orders are based on 3 levels : 
-- Order > Is the 1st level, contains a collection of ordered services
-    - Ordered Services > Is the 2nd level, contains a collection of order lines
-        - Order Lines > Is the 3rd level, contains products, price, description
 
 **Order attributes:**  
 
@@ -578,7 +578,7 @@ Orders are based on 3 levels :
                 "placed_on": "",
                 "completed_on": "",
                 "total_excl_tax": 27.23,
-                "total_tax": 0.62,
+                "total_vat": 0.62,
                 "total_incl_tax": 27.85,
                 "ordered_services": [
                     {
