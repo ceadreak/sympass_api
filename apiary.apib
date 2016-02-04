@@ -398,6 +398,7 @@ Orders are based on 3 levels :
         <tr><td>description</td><td>String</td><td>False</td><td>Description of the ordered product, usually, the product name</td></tr>
         <tr><td>quantity</td><td>Number</td><td>False</td><td>Quantity of product for one line</td></tr>
         <tr><td>price</td><td>Float</td><td>False</td><td>Price excluding tax per unit</td></tr>
+        <tr><td>public_price</td><td>Float</td><td>False</td><td>Public Price including tax per unit</td></tr>
         <tr><td>vat_code</td><td>String</td><td>False</td><td>Accounting service formatted vat code</td></tr>
         <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
         <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
@@ -461,6 +462,7 @@ Orders are based on 3 levels :
                                     "description": "Aquarium Amnéville",
                                     "quantity": 1,
                                     "price": 6.6,
+                                    "public_price_including_tax": 6.00,
                                     "vat_code": "vaore",
                                     "total_excl_tax": 6.6,
                                     "total_vat": 0,
@@ -472,6 +474,7 @@ Orders are based on 3 levels :
                                     "product_name": "Mondorf 3h wellness",
                                     "description": "Mondorf 3h wellness",
                                     "quantity": 1,
+                                    "public_price_including_tax": 24.00,
                                     "price": 20.63,
                                     "vat_code": "vml03",
                                     "total_excl_tax": 20.63,
@@ -508,6 +511,7 @@ Orders are based on 3 levels :
                                     "product_name": "Aquarium Amnéville",
                                     "description": "Aquarium Amnéville",
                                     "quantity": 1,
+                                    "public_price_including_tax": 6.00,
                                     "price": 6.6,
                                     "vat_code": "vaore",
                                     "total_excl_tax": 6.6,
@@ -576,6 +580,7 @@ Get one order
                                 "product_name": "Aquarium Amnéville",
                                 "description": "Aquarium Amnéville",
                                 "quantity": 1,
+                                "public_price_including_tax": 6.00,
                                 "price": 6.6,
                                 "vat_code": "vaore",
                                 "total_excl_tax": 6.6,
@@ -588,6 +593,7 @@ Get one order
                                 "product_name": "Mondorf 3h wellness",
                                 "description": "Mondorf 3h wellness",
                                 "quantity": 1,
+                                "public_price_including_tax": 24.00,
                                 "price": 20.63,
                                 "vat_code": "vml03",
                                 "total_excl_tax": 20.63,
