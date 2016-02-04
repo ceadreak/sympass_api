@@ -379,13 +379,24 @@ Orders are based on 3 levels :
     <tbody>
         <tr><td>id</td><td>Number</td><td>False</td><td>Ordered Service unique identifier</td></tr>      
         <tr><td>service_name</td><td>Number</td><td>False</td><td>Related service name</td></tr>
+        <tr><td>service_type</td><td>Number</td><td>False</td><td>* Check the services types description bellow</td></tr>      
         <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
         <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
         <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
         <tr><td>will_be_handled_on</td><td>Timestamp without Timezone</td><td>True</td><td>Estimated date of ordered service handling. e.g. next wednesday for ticketing service</td></tr>  
         <tr><td>order_lines (only for a single order)</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
     </tbody>
-</table>     
+</table>   
+
+**Order Service types:** 
+
+<table>  
+    <thead><th>Name</th><th>Binary value</th><th>Description</th></thead>
+    <tbody>
+        <tr><td>TICKETING</td><td>2</td><td>Ticketing service</td></tr>      
+        <tr><td>CONCIERGERIE</td><td>4</td><td>Conciergerie service</td></tr>      
+    </tbody>
+</table>
 
 **Order Lines attributes:**  
 
