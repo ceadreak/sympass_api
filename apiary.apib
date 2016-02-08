@@ -260,7 +260,7 @@ Each member has a Sympass ID Card.
                 "conciergerie_alert": 3
             }
         }
-        
+
 + Response 401 (application/json)  
 
         {  
@@ -874,7 +874,9 @@ Partners are `clients` with a `partnership` contract.
         <tr><td>minimum_discount</td><td>Number</td><td>True</td><td>Minimum discount value in %</td></tr>      
         <tr><td>phone</td><td>String</td><td>True</td><td>Phone number of the first contact in partner's contacts list</td></tr>      
         <tr><td>logo</td><td>String</td><td>False</td><td>A link to the partner logo</td></tr>      
-        <tr><td>banner</td><td>String</td><td>False</td><td>A link to the partner banner</td></tr>      
+        <tr><td>banner</td><td>String</td><td>False</td><td>A link to the partner banner</td></tr> 
+        <tr><td>contacts</td><td>JSON</td><td>False</td><td>Array of partner's contacts</td></tr>
+        <tr><td>addresses</td><td>JSON</td><td>False</td><td>Array of partner's addresses</td></tr>
     </tbody>
 </table>     
    
@@ -1060,17 +1062,8 @@ Partners are `clients` with a `partnership` contract.
             "error_description": "Access token has expired or has been deleted"
         }  
 
-## Partner [/api/partners/{partner_id_or_slug}]
-Get one Partner with his contacts and his current discounts
-
-<table>  
-    <thead><th>Name</th><th>Type</th><th>Nullable</th><th>Description</th></thead>
-    <tbody>
-        <tr><td>contacts</td><td>JSON</td><td>False</td><td>Array of partner's contacts</td></tr>
-        <tr><td>addresses</td><td>JSON</td><td>False</td><td>Array of partner's addresses</td></tr>
-        <tr><td>discounts</td><td>JSON</td><td>False</td><td>Array of partner's discounts</td></tr>
-    </tbody>
-</table>     
+## Partner [/api/partner/{partner_id_or_slug}]
+Get one Partner
 
 ### View a Partner details [GET]
 
@@ -1173,48 +1166,6 @@ Get one Partner with his contacts and his current discounts
                         "longitude" : 5.98058,
                         "latitude" : 49.4937
                     }
-                ],
-                "discounts": [
-                    {
-                        "id": 5280,
-                        "title": "Limited offer",
-                        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                        "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                        "countries": 1,
-                        "minimum": 10,
-                        "maximum": 20,
-                        "valid_from": "2016-01-07 00:00:00",
-                        "valid_to": "2016-01-15 00:00:00",
-                        "flags": 1,
-                        "type": 2,
-                        "status": 0,
-                        "categories": [
-                            {
-                                "first_level": "beaué, santé, bien-être",
-                                "second_level": "parfumeries, cosmétiques"
-                            }
-                        ]
-                    },
-                    {
-                        "id": 5280,
-                        "title": "Permanent offer",
-                        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                        "attention_catcher": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at mollis mauris. Nullam vehicula feugiat lacus. Maecenas sollicitudin velit eu metus placerat tempor.",
-                        "countries": 3,
-                        "minimum": 5,
-                        "maximum": 15,
-                        "valid_from": "",
-                        "valid_to": "",
-                        "flags": 0,
-                        "type": 2,
-                        "status": 0,
-                        "categories": [
-                            {
-                                "first_level": "beaué, santé, bien-être",
-                                "second_level": "parfumeries, cosmétiques"
-                            }
-                        ]
-                    }
                 ]
             }
         }
@@ -1232,6 +1183,8 @@ Get one Partner with his contacts and his current discounts
 ## Addresses Collection [/api/addresses/{holder_type}/{id_or_slug}]
 Addresses will be used for partners geolocalization e.g. if holder type is 'partner'
 Or used to populate a dropdown of client addresses list in member profile e.g. if holder type is 'client'
+
+> Not yet implemented !
 
 **Address attributes:**  
 
@@ -1271,77 +1224,81 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
     
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 2299,
-                "partner_id": 578,
-                "partner_name": "Sephora",
-                "partner_slug": "-sephora",
-                "title": "Boutique",
-                "is_head_quarter": true,
-                "street": "16 avenue de la gare",
-                "additional_details": "",
-                "locality": "Luxembourg",
-                "postal_code" : "L-1610",
-                "country" : "LU",
-                "longitude" : 5.9294,
-                "latitude" : 49.9665
-            }, {
-                "id": 2298,
-                "partner_id": 578,
-                "partner_name": "Sephora",
-                "partner_slug": "-sephora",
-                "title": "Boutique",
-                "is_head_quarter": false,
-                "street": "73 GRAND-RUE",
-                "additional_details": "",
-                "locality": "Luxembourg",
-                "postal_code" : "L-1610",
-                "country" : "LU",
-                "longitude" : 6.12851,
-                "latitude" : 49.6121
-            }, {
-                "id": 2297,
-                "partner_id": 578,
-                "partner_name": "Sephora",
-                "partner_slug": "-sephora",
-                "title": "Boutique",
-                "is_head_quarter": false,
-                "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
-                "additional_details": "",
-                "locality": "Kirchberg",
-                "postal_code" : "L-2721",
-                "country" : "LU",
-                "longitude" : 49.6331,
-                "latitude" : 49.9665
-            }, {
-                "id": 2296,
-                "partner_id": 578,
-                "partner_name": "Sephora",
-                "partner_slug": "-sephora",
-                "title": "Boutique",
-                "is_head_quarter": false,
-                "street": "69 rue de l'Alzette",
-                "additional_details": "",
-                "locality": "Esch-sur-alzette",
-                "postal_code" : "L-1610",
-                "country" : "LU",
-                "longitude" : 5.98058,
-                "latitude" : 49.4937
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data": [
+                {
+                    "id": 2299,
+                    "partner_id": 578,
+                    "partner_name": "Sephora",
+                    "partner_slug": "-sephora",
+                    "title": "Boutique",
+                    "is_head_quarter": true,
+                    "street": "16 avenue de la gare",
+                    "additional_details": "",
+                    "locality": "Luxembourg",
+                    "postal_code" : "L-1610",
+                    "country" : "LU",
+                    "longitude" : 5.9294,
+                    "latitude" : 49.9665
+                }, {
+                    "id": 2298,
+                    "partner_id": 578,
+                    "partner_name": "Sephora",
+                    "partner_slug": "-sephora",
+                    "title": "Boutique",
+                    "is_head_quarter": false,
+                    "street": "73 GRAND-RUE",
+                    "additional_details": "",
+                    "locality": "Luxembourg",
+                    "postal_code" : "L-1610",
+                    "country" : "LU",
+                    "longitude" : 6.12851,
+                    "latitude" : 49.6121
+                }, {
+                    "id": 2297,
+                    "partner_id": 578,
+                    "partner_name": "Sephora",
+                    "partner_slug": "-sephora",
+                    "title": "Boutique",
+                    "is_head_quarter": false,
+                    "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
+                    "additional_details": "",
+                    "locality": "Kirchberg",
+                    "postal_code" : "L-2721",
+                    "country" : "LU",
+                    "longitude" : 49.6331,
+                    "latitude" : 49.9665
+                }, {
+                    "id": 2296,
+                    "partner_id": 578,
+                    "partner_name": "Sephora",
+                    "partner_slug": "-sephora",
+                    "title": "Boutique",
+                    "is_head_quarter": false,
+                    "street": "69 rue de l'Alzette",
+                    "additional_details": "",
+                    "locality": "Esch-sur-alzette",
+                    "postal_code" : "L-1610",
+                    "country" : "LU",
+                    "longitude" : 5.98058,
+                    "latitude" : 49.4937
+                }
+            ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
 
 ## Address [/api/addresses/{id_or_slug}]
 Get one Address
+
+> Not yet implemented
 
 ### View an address details [GET]
 
@@ -1358,8 +1315,10 @@ Get one Address
    
 + Response 200 (application/json)
 
-        [
-            
+        {
+            "status": 0,
+            "message": "",
+            "data": {
                 "id": 2296,
                 "partner_id": 578,
                 "partner_name": "Sephora",
@@ -1374,16 +1333,14 @@ Get one Address
                 "longitude" : "5.98058",
                 "latitude" : "49.4937"
             }
-        ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
 
 
 
@@ -1451,41 +1408,45 @@ Get all ticketing and conciergerie services
 
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 26,
-                "name": "Blanchisserie",
-                "slug": "blanchisserie-bgl"
-                "default_description": "La blanchisserie vous accueille tous les jours de 08 à 16h ...",
-                "tagline": "",
-                "type": 4,
-                "status": 0,
-                "options": 1,
-                "closed_from": "",
-                "closed_to": ""
-            },
-            {
-                "id": 52,
-                "name": "Billetterie",
-                "slug": "billetterie-sympass"
-                "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
-                "tagline": "La billetterie Sympass, c'est sympass !",
-                "type": 2,
-                "status": 0,
-                "closed_from": "",
-                "closed_to": ""
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data": [
+                {
+                    "id": 26,
+                    "name": "Blanchisserie",
+                    "slug": "blanchisserie-bgl",
+                    "default_description": "La blanchisserie vous accueille tous les jours de 08 à 16h ...",
+                    "tagline": "",
+                    "type": 4,
+                    "status": 0,
+                    "options": 1,
+                    "closed_from": "",
+                    "closed_to": ""
+                },
+                {
+                    "id": 52,
+                    "name": "Billetterie",
+                    "slug": "billetterie-sympass",
+                    "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
+                    "tagline": "La billetterie Sympass, c'est sympass !",
+                    "type": 2,
+                    "status": 0,
+                    "closed_from": "",
+                    "closed_to": ""
+                }
+            ]
+        }
         
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
+
+
 ## Service [/api/services/{service_id_or_slug}]
 Get one service
 
@@ -1504,29 +1465,32 @@ Get one service
     
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 52,
-                "name": "Billetterie",
-                "slug": "billetterie-sympass"
-                "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
-                "tagline": "La billetterie Sympass, c'est sympass !",
-                "type": 2,
-                "status": 0,
-                "closed_from": "",
-                "closed_to": ""
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data":
+                {
+                    "id": 52,
+                    "name": "Billetterie",
+                    "slug": "billetterie-sympass",
+                    "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
+                    "tagline": "La billetterie Sympass, c'est sympass !",
+                    "type": 2,
+                    "status": 0,
+                    "closed_from": "",
+                    "closed_to": ""
+                }
+        }
        
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
+
+
 ## Products Categories Collection [/api/products-categories/{service_id_or_slug}]
 Categories for a given service
 
@@ -1568,36 +1532,33 @@ Categories for a given service
     
 + Response 200 (application/json)
 
-    {
-        "status": 0,
-        "message": "",
-        "last_update": 1002902098,
-        "data": 
-        [
-            {
-"id": 232,
-"name": "Bien être",
-"description": "",
-"status": 0,
-"icon": "icon-bien-etre"
-}, {
-"id": 233,
-"name": "Zoos",
-"description": "",
-"status": 0,
-"icon": "icon-zoos"
-}
-]
-}
+        {
+            "status": 0,
+            "message": "",
+            "data": [
+                {    
+                    "id": 232,
+                    "name": "Bien être",
+                    "description": "",
+                    "status": 0,
+                    "icon": "icon-bien-etre"
+                }, {
+                    "id": 233,
+                    "name": "Zoos",
+                    "description": "",
+                    "status": 0,
+                    "icon": "icon-zoos"
+                }
+            ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+        
         
 ## Product Category [/api/products-categories/{service_id_or_slug}/{category_id}]
 Get one category
@@ -1618,25 +1579,28 @@ Get one category
     
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 233,
-                "name": "Zoos",
-                "description": "",
-                "status": 0,
-                "icon": "icon-zoos"
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data":
+                {
+                    "id": 233,
+                    "name": "Zoos",
+                    "description": "",
+                    "status": 0,
+                    "icon": "icon-zoos"
+                }
+        }
        
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-        
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
+
+
 ## Products Collection [/api/products/{service_id_or_slug}/{category_id}]
 Products are linked to services throw categories.
 Api will only send ACTIVE and AVAILABLE products (status = 3)
@@ -1686,39 +1650,39 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
    
 + Response 200 (application/json)
 
-{
-"status": 0,
-"message": "",
-"last_update": 1002902098,
-"data": [{
-"id": 77234,
-"partner_name": "Villa pompei",
-"name": "Villa pompei 2h",
-"description": "<p>Les peignoirs et essuies ne sont pas compris dans l'entr&eacute;e&nbsp;<\/p>\r\n<p>sans date de validit&eacute;<\/p>",
-"tagline": "",
-"public_price": 24.9,
-"price_including_tax": 21.5,
-"status": 3
-}, {
-"id": 77330,
-"partner_name": "Mondorf",
-"name": "Mondorf domaine thermal, Gift box silver",
-"description": "<p><strong>Validit&eacute;&nbsp;<strong>22.12.2016<\/strong><\/strong><\/p>\r\n<p>Trois types de prestations au choix: le FORFAIT SPA, le PLAISIR DETENTE OU GOURMAND ou bien le COFFRET de PRODUITS SPA&nbsp;:<\/p>\r\n<p>-&nbsp;&nbsp;",
-"tagline": "",
-"public_price": 105,
-"price_including_tax": 95,
-"status": 3
-}]
-}
+        {
+            "status": 0,
+            "message": "",
+            "data": [
+                {
+                    "id": 77234,
+                    "partner_name": "Villa pompei",
+                    "name": "Villa pompei 2h",
+                    "description": "<p>Les peignoirs et essuies ne sont pas compris dans l'entr&eacute;e&nbsp;<\/p>\r\n<p>sans date de validit&eacute;<\/p>",
+                    "tagline": "",
+                    "public_price": 24.9,
+                    "price_including_tax": 21.5,
+                    "status": 3
+                }, {
+                    "id": 77330,
+                    "partner_name": "Mondorf",
+                    "name": "Mondorf domaine thermal, Gift box silver",
+                    "description": "<p><strong>Validit&eacute;&nbsp;<strong>22.12.2016<\/strong><\/strong><\/p>\r\n<p>Trois types de prestations au choix: le FORFAIT SPA, le PLAISIR DETENTE OU GOURMAND ou bien le COFFRET de PRODUITS SPA&nbsp;:<\/p>\r\n<p>-&nbsp;&nbsp;",
+                    "tagline": "",
+                    "public_price": 105,
+                    "price_including_tax": 95,
+                    "status": 3
+                }
+            ]
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
 
 ## Product [/api/products/{service_id_or_slug}/{category_id}/{product_id}]
 Get one Service Category Product
@@ -1740,27 +1704,27 @@ Get one Service Category Product
    
 + Response 200 (application/json)
 
-        [
-            {
-                "id": 77238,
-                "partner_name": "Zoo amnéville",
-                "name": "Zoo amnéville adulte",
-                "description": "<p>12 ans et plus. validit&eacute;: non limit&eacute;e Ouvert toute l'ann&eacute;e.<\/p>",
-                "tagline": "",
-                "public_price": 35,
-                "price_including_tax": 25.4,
-                "status": 3,
-                "service": "Billetterie",
-                "category": "Zoos"
-            }
-        ]
+        {
+            "status": 0,
+            "message": "",
+            "data":
+                {
+                    "id": 77238,
+                    "partner_name": "Zoo amnéville",
+                    "name": "Zoo amnéville adulte",
+                    "description": "<p>12 ans et plus. validit&eacute;: non limit&eacute;e Ouvert toute l'ann&eacute;e.<\/p>",
+                    "tagline": "",
+                    "public_price": 35,
+                    "price_including_tax": 25.4,
+                    "status": 3,
+                    "service": "Billetterie",
+                    "category": "Zoos"
+                }
+        }
 
 + Response 401 (application/json)  
 
-        [
-            {  
-                "error": "Unauthorized",
-                "error_description": "Access token has expired or has been deleted"
-            }  
-        ]
-
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }
