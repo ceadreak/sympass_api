@@ -263,12 +263,14 @@ Each member has a Sympass ID Card.
 
 + Response 401 (application/json)  
 
-        {  
+        {
             "error": "Unauthorized",
             "error_description": "Access token has expired or has been deleted"
         }  
         
-
+        
+        
+        
 ### Update Member [PUT]
 The App will sent a dict with some data to update in the Member entity
 
@@ -1356,7 +1358,7 @@ Get all ticketing and conciergerie services
         <tr><td>id</td><td>Number</td><td>False</td><td>Unique identifier</td></tr>      
         <tr><td>name</td><td>String</td><td>False</td><td>Service name</td></tr>      
         <tr><td>slug</td><td>String</td><td>False</td><td>Unique identifier based on the Service internal name</td></tr>
-        <tr><td>default_description</td><td>String</td><td>True</td><td>Service description</td></tr>
+        <tr><td>description</td><td>String</td><td>True</td><td>Service description</td></tr>
         <tr><td>tagline</td><td>String</td><td>True</td><td>A short service tagline</td></tr>
         <tr><td>type</td><td>Number</td><td>False</td><td>* Check the services types description bellow</td></tr>      
         <tr><td>status</td><td>Number</td><td>False</td><td>* Check the services statuses description bellow</td></tr>
@@ -1416,7 +1418,7 @@ Get all ticketing and conciergerie services
                     "id": 26,
                     "name": "Blanchisserie",
                     "slug": "blanchisserie-bgl",
-                    "default_description": "La blanchisserie vous accueille tous les jours de 08 à 16h ...",
+                    "description": "La blanchisserie vous accueille tous les jours de 08 à 16h ...",
                     "tagline": "",
                     "type": 4,
                     "status": 0,
@@ -1428,10 +1430,11 @@ Get all ticketing and conciergerie services
                     "id": 52,
                     "name": "Billetterie",
                     "slug": "billetterie-sympass",
-                    "default_description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
+                    "description": "La Billetterie Sympass, c'est plus qu'une billetterie, c'est aussi ...",
                     "tagline": "La billetterie Sympass, c'est sympass !",
                     "type": 2,
                     "status": 0,
+                    "options": 0,
                     "closed_from": "",
                     "closed_to": ""
                 }
