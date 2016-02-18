@@ -1480,6 +1480,7 @@ Get one service
                     "tagline": "La billetterie Sympass, c'est sympass !",
                     "type": 2,
                     "status": 0,
+                    "options": 0,
                     "closed_from": "",
                     "closed_to": ""
                 }
@@ -1507,6 +1508,9 @@ Categories for a given service
         <tr><td>description</td><td>String</td><td>True</td><td>Category description (not used for now)</td></tr>
         <tr><td>status</td><td>Number</td><td>False</td><td>* Check the categories statuses description bellow</td></tr>
         <tr><td>icon</td><td>String</td><td>True</td><td>A css class name related to a specific icon</td></tr>
+        <tr><td>service_id</td><td>String</td><td>True</td><td>Service unique id</td></tr>
+        <tr><td>service_slug</td><td>String</td><td>True</td><td>Service unique slug</td></tr>
+        <tr><td>service_name</td><td>String</td><td>True</td><td>Name of the related service</td></tr>
     </tbody>
 </table>     
 
@@ -1545,36 +1549,54 @@ Categories for a given service
                     "description": "",
                     "status": 0,
                     "icon": "icon-bons"
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }, {
                     "id": 232,
                     "name": "Bien être",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-bien-etre"
+                    "icon": "icon-bien-etre",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }, {
                     "id": 233,
                     "name": "Zoos",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-zoos"
+                    "icon": "icon-zoos",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }, {
                     "id": 234,
                     "name": "Parcs d'attraction",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-parcs"
+                    "icon": "icon-parcs",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }, {
                     "id": 235,
                     "name": "Cinéma",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-cinema"
+                    "icon": "icon-cinema",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }, {
                     "id": 236,
                     "name": "Sports",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-sport"
+                    "icon": "icon-sport",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }
             ]
         }
@@ -1615,7 +1637,10 @@ Get one category
                     "name": "Zoos",
                     "description": "",
                     "status": 0,
-                    "icon": "icon-zoos"
+                    "icon": "icon-zoos",
+                    "service_slug": "billetterie-sympass",
+                    "service_id": 52,
+                    "service_name": "Billetterie"
                 }
         }
        
