@@ -749,12 +749,12 @@ API Discounts request will only fetch the active discounts
                     "status": 0,
                     "categories": [
                         {
-                            "first_level": "beaué, santé, bien-être",
-                            "second_level": "parfumeries, cosmétiques"
+                            "category": "beaué, santé, bien-être",
+                            "subcategory": "parfumeries, cosmétiques"
                         },
                         {
-                            "first_level": "sports, activité",
-                            "second_level": "paintball ..."
+                            "category": "sports, activité",
+                            "subcategory": "paintball ..."
                         }
                     ]
                 },
@@ -777,8 +777,8 @@ API Discounts request will only fetch the active discounts
                     "status": 0,
                     "categories": [
                         {
-                            "first_level": "beaué, santé, bien-être",
-                            "second_level": "parfumeries, cosmétiques"
+                            "category": "beaué, santé, bien-être",
+                            "subcategory": "parfumeries, cosmétiques"
                         }
                     ]
                 }
@@ -832,8 +832,8 @@ Get one discount
                 "status": 0,
                 "categories": [
                     {
-                        "first_level": "beaué, santé, bien-être",
-                        "second_level": "parfumeries, cosmétiques"
+                        "category": "beaué, santé, bien-être",
+                        "subcategory": "parfumeries, cosmétiques"
                     }
                 ]
             }
@@ -1609,7 +1609,7 @@ Categories for a given service
         }  
         
         
-## Product Category [/api/products-categories/{service_id_or_slug}/{category_id}]
+## Product Category [/api/products-categories/{category_id}]
 Get one category
 
 ### View one category details [GET]
@@ -1623,7 +1623,6 @@ Get one category
 
 + Parameters
 
-    + service_id_or_slug (number|string) - ID or slug of the researched service
     + category_id (number) - ID of the researched category
     
 + Response 200 (application/json)
