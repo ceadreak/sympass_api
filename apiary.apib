@@ -872,13 +872,14 @@ Partners are `clients` with a `partnership` contract.
         <tr><td>facebook</td><td>String</td><td>True</td><td>Facebook page</td></tr>      
         <tr><td>website</td><td>String</td><td>True</td><td>Website address</td></tr>      
         <tr><td>brands</td><td>String</td><td>True</td><td>Which brands are sold by this partner ? (usually comma separated values)</td></tr>
-        <tr><td>maximum_discount</td><td>Number</td><td>True</td><td>Maximum discount value in %</td></tr>      
-        <tr><td>minimum_discount</td><td>Number</td><td>True</td><td>Minimum discount value in %</td></tr>      
+        <tr><td>maximum_discount</td><td>Number</td><td>True</td><td>Maximum discount value in % (only for partners list)</td></tr>      
+        <tr><td>minimum_discount</td><td>Number</td><td>True</td><td>Minimum discount value in % (only for partners list)</td></tr>      
         <tr><td>phone</td><td>String</td><td>True</td><td>Phone number of the first contact in partner's contacts list</td></tr>      
         <tr><td>logo</td><td>String</td><td>False</td><td>A link to the partner logo</td></tr>      
         <tr><td>banner</td><td>String</td><td>False</td><td>A link to the partner banner</td></tr> 
         <tr><td>contacts</td><td>JSON</td><td>False</td><td>Array of partner's contacts</td></tr>
         <tr><td>addresses</td><td>JSON</td><td>False</td><td>Array of partner's addresses</td></tr>
+        <tr><td>categories</td><td>JSON</td><td>False</td><td>Categories of partner's related discounts (only for partners list)</td></tr>
     </tbody>
 </table>     
    
@@ -933,6 +934,20 @@ Partners are `clients` with a `partnership` contract.
                         "phone": "12 34 56 78",
                         "logo": "https://www.sympass.lu/img/app/partners/logos/578.png",
                         "banner": "https://www.sympass.lu/img/app/partners/banners/578.png",
+                        "categories": [
+                            {
+                                "category": "beauté, bien-être, santé",
+                                "subcategory": "parfumeries, cosmétiques"
+                            },
+                            {
+                                "category": "beauté, bien-être, santé",
+                                "subcategory": "instituts de beauté"
+                            },
+                            {
+                                "category": "beauté, bien-être, santé",
+                                "subcategory": "relaxation, bien-être"
+                            }
+                        ],
                         "contacts": [
                             {
                                 "id": 40,
