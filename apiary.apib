@@ -4,8 +4,8 @@ HOST: http://polls.apiblueprint.org/
 # Sympass API
 Sympass API is a RESTful API.
 For each API request except the request token API, there are 2 mandatory http header parameters : 
-- lang > Is an ISO(2) language code (fr | en | de | ...)
-- token > Is the member's unique token
+- Accept-Language > Is an ISO(2) language code (fr | en | de | ...)
+- Authorization > Bearer > Is the member's unique token
 
 **TODO WEB**
 > Script calcul coordonnées geo partenaires + update sauvegarde pour calcul auto<br>
@@ -40,7 +40,7 @@ Sympass API handle unknown routes and returns a 404 error.
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Response 404 (application/json)  
@@ -193,7 +193,7 @@ Each member has a Sympass ID Card.
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Response 200 (application/json)
@@ -278,7 +278,7 @@ The App will sent a dict with some data to update in the Member entity
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Request (application/json)
@@ -440,7 +440,7 @@ Orders are based on 3 levels :
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Response 200 (application/json)
@@ -558,7 +558,7 @@ Get one order
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -717,7 +717,7 @@ API Discounts request will only fetch the active discounts
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -801,7 +801,7 @@ Get one discount
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -899,7 +899,7 @@ Partners are `clients` with a `partnership` contract.
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1088,7 +1088,7 @@ Get one Partner
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1197,11 +1197,9 @@ Get one Partner
         
     
 
-## Addresses Collection [/api/addresses/{holder_type}/{id_or_slug}]
-Addresses will be used for partners geolocalization e.g. if holder type is 'partner'
-Or used to populate a dropdown of client addresses list in member profile e.g. if holder type is 'client'
-
-> Not yet implemented !
+## Addresses Collection [/api/clients-addresses/{contract_type}]
+Addresses will be used for partners geolocalization e.g. if contract type is 'partner'
+Or used to populate a dropdown of client addresses list in member profile e.g. if contract type is 'client'
 
 **Address attributes:**  
 
@@ -1231,13 +1229,12 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
 
-    + holder_type (string) - type of address holder. Can be 'client' or 'partner'
-    + id_or_slug (number|string) - ID or slug of the researched client's addresses
+    + contract_type (string) - contract type. Can be 'client' or 'partner'
     
 + Response 200 (application/json)
 
@@ -1247,9 +1244,9 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
             "data": [
                 {
                     "id": 2299,
-                    "partner_id": 578,
-                    "partner_name": "Sephora",
-                    "partner_slug": "-sephora",
+                    "client_id": 578,
+                    "client_name": "Sephora",
+                    "client_slug": "-sephora",
                     "title": "Boutique",
                     "is_head_quarter": true,
                     "street": "16 avenue de la gare",
@@ -1261,9 +1258,9 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
                     "latitude" : 49.9665
                 }, {
                     "id": 2298,
-                    "partner_id": 578,
-                    "partner_name": "Sephora",
-                    "partner_slug": "-sephora",
+                    "client_id": 578,
+                    "client_name": "Sephora",
+                    "client_slug": "-sephora",
                     "title": "Boutique",
                     "is_head_quarter": false,
                     "street": "73 GRAND-RUE",
@@ -1275,9 +1272,9 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
                     "latitude" : 49.6121
                 }, {
                     "id": 2297,
-                    "partner_id": 578,
-                    "partner_name": "Sephora",
-                    "partner_slug": "-sephora",
+                    "client_id": 578,
+                    "client_name": "Sephora",
+                    "client_slug": "-sephora",
                     "title": "Boutique",
                     "is_head_quarter": false,
                     "street": "5 CC AUCHAN RUE ALPHONSE WEICKER",
@@ -1289,9 +1286,9 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
                     "latitude" : 49.9665
                 }, {
                     "id": 2296,
-                    "partner_id": 578,
-                    "partner_name": "Sephora",
-                    "partner_slug": "-sephora",
+                    "client_id": 578,
+                    "client_name": "Sephora",
+                    "client_slug": "-sephora",
                     "title": "Boutique",
                     "is_head_quarter": false,
                     "street": "69 rue de l'Alzette",
@@ -1312,10 +1309,8 @@ Or used to populate a dropdown of client addresses list in member profile e.g. i
             "error_description": "Access token has expired or has been deleted"
         }  
 
-## Address [/api/addresses/{id_or_slug}]
-Get one Address
-
-> Not yet implemented
+## Address [/api/client-address/{id}]
+Get one Client Address
 
 ### View an address details [GET]
 
@@ -1323,12 +1318,12 @@ Get one Address
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
 
-    + id_or_slug (number|string) - ID or slug of the researched partner's addresses
+    + id (number) - ID of the researched client|partner's address
    
 + Response 200 (application/json)
 
@@ -1337,9 +1332,9 @@ Get one Address
             "message": "",
             "data": {
                 "id": 2296,
-                "partner_id": 578,
-                "partner_name": "Sephora",
-                "partner_slug": "-sephora",
+                "client_id": 578,
+                "client_name": "Sephora",
+                "client_slug": "-sephora",
                 "title": "Boutique",
                 "is_head_quarter": false,
                 "street": "69 rue de l'Alzette",
@@ -1420,7 +1415,7 @@ Get all ticketing and conciergerie services
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Response 200 (application/json)
@@ -1474,7 +1469,7 @@ Get one service
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1545,7 +1540,7 @@ Categories for a given service
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1633,7 +1628,7 @@ Get one category
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1705,7 +1700,7 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
@@ -1759,7 +1754,7 @@ Get one Service Category Product
 
     + Headers
     
-            lang: fr
+            Accept-Language: fr
             Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
 
 + Parameters
