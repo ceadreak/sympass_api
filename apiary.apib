@@ -1358,7 +1358,7 @@ Get one Client Address
 
 
 ## Services Collection [/api/services]
-Get all ticketing and conciergerie services
+Get all enabled ticketing and conciergerie services for a member
 
 **Service attributes:**
 
@@ -1434,7 +1434,7 @@ Get all ticketing and conciergerie services
                     "status": 0,
                     "options": 1,
                     "closed_from": "",
-                    "closed_to": ""
+                    "closed_to": "",
                 },
                 {
                     "id": 52,
@@ -1446,7 +1446,7 @@ Get all ticketing and conciergerie services
                     "status": 0,
                     "options": 0,
                     "closed_from": "",
-                    "closed_to": ""
+                    "closed_to": "",
                 }
             ]
         }
@@ -1460,7 +1460,7 @@ Get all ticketing and conciergerie services
 
 
 
-## Service [/api/services/{service_id_or_slug}]
+## Service [/api/service/{service_id_or_slug}]
 Get one service
 
 ### View one service details [GET]
@@ -1492,7 +1492,7 @@ Get one service
                     "status": 0,
                     "options": 0,
                     "closed_from": "",
-                    "closed_to": ""
+                    "closed_to": "",
                 }
         }
        
@@ -1664,7 +1664,7 @@ Get one category
 
 ## Products Collection [/api/products/{service_id_or_slug}/{category_id}]
 Products are linked to services throw categories.
-Api will only send ACTIVE and AVAILABLE products (status = 3)
+Api will only send ACTIVE and AVAILABLE and VISIBLE products (status = 7)
 
 **Product attributes:**
 
@@ -1677,7 +1677,7 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
         <tr><td>description</td><td>String</td><td>True</td><td>What's this product</td></tr>
         <tr><td>tagline</td><td>String</td><td>True</td><td>A short product tagline</td></tr>
         <tr><td>public_price</td><td>Float</td><td>True</td><td>Partner sell this product at this price (include tax)</td></tr>      
-        <tr><td>price_including_tax</td><td>Float</td><td>False</td><td>Is the price for a given category > subcategory with tax</td></tr>      
+        <tr><td>price</td><td>Float</td><td>False</td><td>Is the price for a given category > subcategory with tax and client contribution computed</td></tr>      
         <tr><td>status</td><td>Float</td><td>False</td><td>* Check the product statuses description bellow. A sellable product must to be active AND available</td></tr>
         <tr><td>service (for one product)</td><td>String</td><td>False</td><td>Product is in this service</td></tr>      
         <tr><td>category (for one product)</td><td>String</td><td>False</td><td>Product is in this category</td></tr>      
@@ -1691,6 +1691,7 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
     <tbody>
         <tr><td>ACTIVE</td><td>1</td><td>Product has been activated on the platform</td></tr>      
         <tr><td>AVAILABLE</td><td>2</td><td>Product is available</td></tr>      
+        <tr><td>VISIBLE</td><td>2</td><td>Product is visible on the Sympass platform</td></tr>      
     </tbody>
 </table>
 
@@ -1722,8 +1723,8 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
                     "description": "<p>Les peignoirs et essuies ne sont pas compris dans l'entr&eacute;e&nbsp;<\/p>\r\n<p>sans date de validit&eacute;<\/p>",
                     "tagline": "",
                     "public_price": 24.9,
-                    "price_including_tax": 21.5,
-                    "status": 3
+                    "price": 21.5,
+                    "status": 7
                 }, {
                     "id": 77330,
                     "partner_name": "Mondorf",
@@ -1731,8 +1732,8 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
                     "description": "<p><strong>Validit&eacute;&nbsp;<strong>22.12.2016<\/strong><\/strong><\/p>\r\n<p>Trois types de prestations au choix: le FORFAIT SPA, le PLAISIR DETENTE OU GOURMAND ou bien le COFFRET de PRODUITS SPA&nbsp;:<\/p>\r\n<p>-&nbsp;&nbsp;",
                     "tagline": "",
                     "public_price": 105,
-                    "price_including_tax": 95,
-                    "status": 3
+                    "price": 95,
+                    "status": 7
                 }
             ]
         }
@@ -1745,8 +1746,8 @@ Api will only send ACTIVE and AVAILABLE products (status = 3)
         }  
 
 
-## Product [/api/products/{service_id_or_slug}/{category_id}/{product_id}]
-Get one Service Category Product
+## Product [/api/products/{category_id}/{product_id}]
+Get one Category Product
 
 ### View one Service Category Product details [GET]
 
@@ -1759,7 +1760,6 @@ Get one Service Category Product
 
 + Parameters
 
-    + service_id_or_slug (number|string) - ID or slug of the researched service
     + category_id (number) - ID of the researched category
     + id (number) - ID of the researched product
    
@@ -1776,8 +1776,8 @@ Get one Service Category Product
                     "description": "<p>12 ans et plus. validit&eacute;: non limit&eacute;e Ouvert toute l'ann&eacute;e.<\/p>",
                     "tagline": "",
                     "public_price": 35,
-                    "price_including_tax": 25.4,
-                    "status": 3,
+                    "price": 25.4,
+                    "status": 7,
                     "service": "Billetterie",
                     "category": "Zoos"
                 }
