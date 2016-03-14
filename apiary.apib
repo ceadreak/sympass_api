@@ -45,15 +45,11 @@ Sympass API handle unknown routes and returns a 404 error.
 
 + Response 404 (application/json)  
 
-        [
-            {  
-                "error": "Not Found",
-                "error_description": "Route does not exists"
-            }  
-        ]
-
-
-
+        {  
+            "error": "Not Found",
+            "error_description": "Route does not exists"
+        }  
+    
 
 ## Request a user token [/oauth/token]
 Because Sympass API's are protected by OAuth2 protocol, each request needs to have a user token passed in the header parameters.
