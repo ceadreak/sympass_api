@@ -7,18 +7,6 @@ For each API request except the request token API, there are 2 mandatory http he
 - Accept-Language > Is an ISO(2) language code (fr | en | de | ...)
 - Authorization > Bearer > Is the member's unique token
 
-**TODO WEB**
-> Script calcul coordonnées geo partenaires + update sauvegarde pour calcul auto<br>
-> Calcul du montant économisé par membre + update sauvegarde pour montant économisé en billetterie <br>
-> Ajout propriété Member::hobbies <br>
-> Ajout répertoire public/img/app pour logo et bannières des partenaires version réduits + script conversion images existantes <br>
-
-**TODO DOC**
-> Récupération du montant "normal" + montant avec réduction + date + partenaire à l'enregistremrent d'un achat <br>
-> Pour les objets uniques, pas de liste > dictionnaire <br>
-> Api Discounts : Ne pas retourner les discounts type ONLINE
- 
-
 # Description Of Usual Server Responses  
 - 200 `OK` - the request was successful (some API calls may return 201 instead). 
 - 201 `Created` - the request was successful and a resource was created.  
@@ -1193,9 +1181,9 @@ Get one Partner
         
     
 
-## Addresses Collection [/api/clients-addresses/{contract_type}]
-Addresses will be used for partners geolocalization e.g. if contract type is 'partner'
-Or used to populate a dropdown of client addresses list in member profile e.g. if contract type is 'client'
+## Addresses Collection [/api/clients-addresses/{contract_type_or_client_id}]
+Addresses will be used for partners geolocalization e.g. if contract_type_or_client_id is 'partner'
+Or used to populate a dropdown of client addresses list in member profile e.g. if contract_type_or_client_id is a 'client_id'
 
 **Address attributes:**  
 
