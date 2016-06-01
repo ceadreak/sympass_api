@@ -18,16 +18,16 @@ For each API request except the request token API, there are 2 mandatory http he
 - 405 `Method Not Allowed` - requested method is not supported for resource.  
 
 # Exception codes
-BAD_JSON_FORMAT       = 200001
-CONTENT_NOT_FOUND     = 210001
-PAGE_NOT_FOUND        = 210002
-BAD_REQUEST           = 210003
-METHOD_NOT_ALLOWED    = 210004
-UNKNOWN_OWNER         = 210005
-UNAUTHORIZED          = 210006
-UNEXPECTED_VALUE      = 220001
-INVALID_LOGIN         = 220002
-LOGIN_ALREADY_USED    = 220003
+- BAD_JSON_FORMAT       = 200001
+- CONTENT_NOT_FOUND     = 210001
+- PAGE_NOT_FOUND        = 210002
+- BAD_REQUEST           = 210003
+- METHOD_NOT_ALLOWED    = 210004
+- UNKNOWN_OWNER         = 210005
+- UNAUTHORIZED          = 210006
+- UNEXPECTED_VALUE      = 220001
+- INVALID_LOGIN         = 220002
+- LOGIN_ALREADY_USED    = 220003
         
 ## Route not found [/api/unknown_route]
 Sympass API handle unknown routes and returns a 404 error.
