@@ -28,6 +28,8 @@ For each API request except the request token API, there are 2 mandatory http he
 - UNEXPECTED_VALUE      = 220001
 - INVALID_LOGIN         = 220002
 - LOGIN_ALREADY_USED    = 220003
+
+####TODO update doc with these codes handling
         
 ## Route not found [/api/unknown_route]
 Sympass API handle unknown routes and returns a 404 error.
@@ -316,6 +318,65 @@ The App will sent a dict with some data to update in the Member entity
             "update": "ok"
         }
      
++ Response 401 (application/json)  
+
+        {  
+            "error": "Unauthorized",
+            "error_description": "Access token has expired or has been deleted"
+        }  
+
+
+
+## Check Login Validity [/api/check-login-validity]
+Will verify if a provided login can be used or not.
+
+A valid login must : 
+- not be used ...
+- respect this pattern : /\^[A-Za-z0-9]{5,21}$/
+
+Send a login in request. 
+Examples : 
+- {"login":"johndoe"} is correct
+- {"login":"john"} is not correct (too short)
+- {"login":"6199318"} is not correct (already used)
+
+
+### Verify login [POST]
+
++ Request
+
+    + Headers
+    
+            Accept-Language: fr
+            Authorization: bearer sEZa33OmR1TxcJYETRuJE4XhPFYlest9SVeIUq2K
+
++ Request (application/json)
+
+        {
+            "login": "johndoe"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": 0,
+            "message": "valid login"
+        }
+
++ Response 400 (application/json)
+
+        {
+            "status": 220002,
+            "message": "Le format du login est incorrect"
+        }    
+        
++ Response 400 (application/json)
+
+        {
+            "status": 220003,
+            "message": "Ce login est déjà utilisé"
+        }            
+        
 + Response 401 (application/json)  
 
         {  
