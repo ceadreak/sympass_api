@@ -1860,15 +1860,8 @@ Get one Category Product
 
 
 
-
-
-
-
-
-
-
 ## Orders Collection [/api/orders]
-List all orders for a given member (in http header parameters)
+List all orders for a given token
 Orders are based on 3 levels : 
 - Order > Is the 1st level, contains a collection of ordered services
     - Ordered Services > Is the 2nd level, contains a collection of order lines
@@ -1921,7 +1914,7 @@ Orders are based on 3 levels :
         <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
         <tr><td>total_incl_tax</td><td>Float</td><td>False</td><td>Total with tax</td></tr>      
         <tr><td>will_be_handled_on</td><td>Timestamp without Timezone</td><td>True</td><td>Estimated date of ordered service handling. e.g. next wednesday for ticketing service</td></tr>  
-        <tr><td>order_lines (only for a single order)</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
+        <tr><td>order_lines</td><td>Json</td><td>False</td><td>Collection of customer ordered products lines related to this ordered service</td></tr>      
     </tbody>
 </table>   
 
@@ -1946,7 +1939,7 @@ Orders are based on 3 levels :
         <tr><td>description</td><td>String</td><td>False</td><td>Description of the ordered product, usually, the product name</td></tr>
         <tr><td>quantity</td><td>Number</td><td>False</td><td>Quantity of product for one line</td></tr>
         <tr><td>price</td><td>Float</td><td>False</td><td>Price excluding tax per unit</td></tr>
-        <tr><td>public_price</td><td>Float</td><td>False</td><td>Public Price including tax per unit</td></tr>
+        <tr><td>public_price_including_tax</td><td>Float</td><td>False</td><td>Public Price including tax per unit</td></tr>
         <tr><td>vat_code</td><td>String</td><td>False</td><td>Accounting service formatted vat code</td></tr>
         <tr><td>total_excl_tax</td><td>Float</td><td>False</td><td>Total without tax</td></tr>
         <tr><td>total_vat</td><td>Float</td><td>False</td><td>Total tax</td></tr>      
