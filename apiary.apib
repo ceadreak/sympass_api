@@ -34,21 +34,57 @@ For each API request except the request token API, there are 2 mandatory http he
 Some fields in API service requests can be translated. Available languages in request header are `fr`, `en`, `de`.
 Fallback locale is `fr`.
 
+# oAuth2
+Sympass API's are protected by oAuth2 protocol, each request needs a valid token.
+Used stretegies are : 
+- Client credentials
+- Password
+- Refresh token
 
-## Request a user token [/oauth/token]
-- Because Sympass API's are protected by OAuth2 protocol, each request needs to have a user token passed in the header parameters.
+## Client credentials and Password
+To request a token, you must ask a `client ID` and a `client Secret`.
+It's recommended to use `Basic` authentication through the request authorization header :
 
-Example : `grant_type=password&username=6199318&password=6199318`
+`Authorization: Basic dGVzdF9jbGllbnQ6dGVzdF9wYXNzd29yZA==` where `dGVzdF9jbGllbnQ6dGVzdF9wYXNzd29yZA==` is a base64 encoded string containing `test_client:test_password`
 
-- Authentication for user is `Bearer` type but for a request token, `Basic` type with client authentication is required.
+Then you can send user credentials through the body using `json` format :
+
+    {
+        "grant_type" : "password",
+        "username" : "6199318",
+        "password" : "6199318"
+    }
+    
+Or `url-encoded` format :
+
+`grant_type=password&username=6199318&password=6199318`
+
+But for now, it also works if you provide credentials in body using `json` or `url-encoded` formats :
+
+    {
+        "client_id" : "test_client",
+        "client_password" : "test_password",
+        "grant_type" : "password",
+        "username" : "6199318",
+        "password" : "6199318"
+    }
+    
+    
+More informations on https://bshaffer.github.io
+
+## Request token [/oauth/token]
+First request token using `client_credentials` and `password` strategies.
+When a token is expired, a refresh token request can be handled with the client credentials.
 
 ### Request token [POST]
 
-+ Request (application/x-www-form-urlencoded)
++ Request (application/json)
 
     + Body
     
             {
+                "client_id" : "test_client",
+                "client_password" : "test_password",
                 "grant_type": "password",
                 "username": "6199318",
                 "password": "6199318"
@@ -63,7 +99,27 @@ Example : `grant_type=password&username=6199318&password=6199318`
             "scope": null,
             "refresh_token": "ee32f8d38c185e83a2f7ebdc9577d0e48bc5b26c"
         }
+
+
++ Request (application/json)
+
+    + Body
+    
+            {
+                "grant_type": "refresh_token",
+                "refresh_token": "ee32f8d38c185e83a2f7ebdc9577d0e48bc5b26c",
+            }
         
++ Response 200 (application/json) 
+
+        {
+            "access_token": "ad4dd40224978bf64f722993cc1d0f6328c987c5",
+            "expires_in": 3600,
+            "token_type": "Bearer",
+            "scope": null,
+            "refresh_token": "06ebd1721a6f983ed48497f48a4f838a6321d471"
+        }
+
 
 
 ## Member [/api/member/{member_id}]
@@ -2160,4 +2216,5 @@ Get one order
                     }
                 ]
             }
+        }
         }
