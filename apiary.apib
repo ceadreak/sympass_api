@@ -36,6 +36,7 @@ Fallback locale is `fr`.
 
 # oAuth2
 Sympass API's are protected by oAuth2 protocol, each request needs a valid token.
+oAuth2 implementation is based to the PHP lib https://bshaffer.github.io
 Used stretegies are : 
 - Client credentials
 - Password
@@ -69,12 +70,18 @@ But for now, it also works if you provide credentials in body using `json` or `u
         "password" : "6199318"
     }
     
-    
-More informations on https://bshaffer.github.io
+## Client credentials and Refresh token
+When a token is expired, a refresh token request can be handled with the client credentials :
+
+    {
+        "grant_type": "refresh_token",
+        "refresh_token": "ee32f8d38c185e83a2f7ebdc9577d0e48bc5b26c",
+    }
+
 
 ## Request token [/oauth/token]
 First request token using `client_credentials` and `password` strategies.
-When a token is expired, a refresh token request can be handled with the client credentials.
+oAuth2 configuration always issue new refresh token when a token is expired using `client_credentials` and `refresh_token`.
 
 ### Request token [POST]
 
