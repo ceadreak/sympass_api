@@ -304,19 +304,22 @@ Each member has a Sympass ID Card.
                         "selling_price": 1,
                         "reduced_price": 0.95,
                         "created_on": "2016-07-26 11:28:39",
-                        "partner_name": "CK Sport Center"
+                        "name": "CK Sport Center",
+                        "partnership_id": 4
                     },
                     {
                         "selling_price": 2,
                         "reduced_price": 1.7,
                         "created_on": "2016-07-26 11:28:17",
-                        "partner_name": "Les Mômes"
+                        "name": "Les Mômes",
+                        "partnership_id": 213
                     },
                     {
                         "selling_price": 5,
                         "reduced_price": 4,
                         "created_on": "2016-07-25 09:39:49",
-                        "partner_name": "Pain World"
+                        "name": "Pain World",
+                        "partnership_id": 9
                     }
                 ],
                 "total_amount_spent": 26184.92,
@@ -1753,7 +1756,9 @@ Api will only send ACTIVE and AVAILABLE and VISIBLE products (status = 7)
         <tr><td>price</td><td>Float</td><td>False</td><td>Is the price for a given category > subcategory with tax and client contribution computed</td></tr>      
         <tr><td>status</td><td>Float</td><td>False</td><td>* Check the product statuses description bellow. A sellable product must to be active AND available</td></tr>
         <tr><td>service (for one product)</td><td>String</td><td>False</td><td>Product is in this service</td></tr>      
-        <tr><td>category (for one product)</td><td>String</td><td>False</td><td>Product is in this category</td></tr>      
+        <tr><td>category</td><td>String</td><td>False</td><td>Product is in this category</td></tr>      
+        <tr><td>logo</td><td>String</td><td>False</td><td>A link to the partner logo</td></tr>      
+        <tr><td>banner</td><td>String</td><td>False</td><td>A link to the partner banner</td></tr> 
     </tbody>
 </table>     
 
@@ -1800,7 +1805,9 @@ Api will only send ACTIVE and AVAILABLE and VISIBLE products (status = 7)
                     "partner_id": 693,
                     "partner_name": "Aral Superwash",
                     "partner_slug": "-aral-superwash",
-                    "partnership_id": 224
+                    "partnership_id": 224,
+                    "logo": "http://local.sympass-v3.lu:10088/img/partners/logos/224.png",
+                    "banner": "http://local.sympass-v3.lu:10088/img/partners/banners/224.jpg"
                 },
                 {
                     "id": 77275,
@@ -1815,37 +1822,9 @@ Api will only send ACTIVE and AVAILABLE and VISIBLE products (status = 7)
                     "partner_id": 628,
                     "partner_name": "Auchan Kirchberg",
                     "partner_slug": "-auchan-kirchberg",
-                    "partnership_id": 120
-                },
-                {
-                    "id": 77275,
-                    "name": "Auchan Kirchberg: bon d'achat de 10 EUR",
-                    "description": "valable jusqu'au 25.08.2017<br />Valable également dans le drink shop.",
-                    "tagline": null,
-                    "status": 7,
-                    "price": 9.21,
-                    "public_price": 10,
-                    "service": "Billetterie",
-                    "category": "Bons d'achats",
-                    "partner_id": 628,
-                    "partner_name": "Auchan Kirchberg",
-                    "partner_slug": "-auchan-kirchberg",
-                    "partnership_id": 120
-                },
-                {
-                    "id": 77275,
-                    "name": "Auchan Kirchberg: bon d'achat de 10 EUR",
-                    "description": "valable jusqu'au 25.08.2017<br />Valable également dans le drink shop.",
-                    "tagline": null,
-                    "status": 7,
-                    "price": 9.21,
-                    "public_price": 10,
-                    "service": "Billetterie",
-                    "category": "Bons d'achats",
-                    "partner_id": 628,
-                    "partner_name": "Auchan Kirchberg",
-                    "partner_slug": "-auchan-kirchberg",
-                    "partnership_id": 120
+                    "partnership_id": 120,
+                    "logo": "http://local.sympass-v3.lu:10088/img/partners/logos/120.png",
+                    "banner": "http://local.sympass-v3.lu:10088/img/partners/banners/120.jpg"
                 },
                 {
                     "id": 77281,
@@ -1860,22 +1839,9 @@ Api will only send ACTIVE and AVAILABLE and VISIBLE products (status = 7)
                     "partner_id": 628,
                     "partner_name": "Auchan Kirchberg",
                     "partner_slug": "-auchan-kirchberg",
-                    "partnership_id": 120
-                },
-                {
-                    "id": 77281,
-                    "name": "Auchan Kirchberg: bon d'achat de 50 EUR",
-                    "description": "valable jusqu'au 25.08.2017<br />Valable également dans le drink shop.",
-                    "tagline": null,
-                    "status": 7,
-                    "price": 46.06,
-                    "public_price": 50,
-                    "service": "Billetterie",
-                    "category": "Bons d'achats",
-                    "partner_id": 628,
-                    "partner_name": "Auchan Kirchberg",
-                    "partner_slug": "-auchan-kirchberg",
-                    "partnership_id": 120
+                    "partnership_id": 120,
+                    "logo": "http://local.sympass-v3.lu:10088/img/partners/logos/120.png",
+                    "banner": "http://local.sympass-v3.lu:10088/img/partners/banners/120.jpg"
                 }
             ]
         }
@@ -1915,7 +1881,9 @@ Get one Category Product
                     "price": 25.4,
                     "status": 7,
                     "service": "Billetterie",
-                    "category": "Zoos"
+                    "category": "Zoos",
+                    "logo": "http://local.sympass-v3.lu:10088/img/partners/logos/120.png",
+                    "banner": "http://local.sympass-v3.lu:10088/img/partners/banners/120.jpg"
                 }
         }
 
